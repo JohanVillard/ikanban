@@ -1,0 +1,50 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start:dev": "npm run build && nodemon --legacy-watch --exec ts-node ./src/server.ts",
+        "build": "tsc",
+        "test": "mocha -r ts-node/register test/**/*.test.ts",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "prettier": "prettier --write ."
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "dotenv": "^16.4.7",
+        "express": "^5.1.0",
+        "morgan": "^1.10.0",
+        "pg": "^8.14.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.23.0",
+        "@types/dotenv": "^6.1.1",
+        "@types/express": "^5.0.1",
+        "@types/mocha": "^10.0.10",
+        "@types/morgan": "^1.9.9",
+        "@types/node": "^22.14.0",
+        "@types/pg": "^8.11.11",
+        "@types/swagger-jsdoc": "^6.0.4",
+        "@types/swagger-ui-express": "^4.1.8",
+        "@types/uuid": "^10.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.29.0",
+        "@typescript-eslint/parser": "^8.29.0",
+        "eslint": "^9.23.0",
+        "eslint-config-prettier": "^10.1.1",
+        "eslint-plugin-prettier": "^5.2.6",
+        "globals": "^16.0.0",
+        "mocha": "^11.1.0",
+        "nodemon": "^3.1.9",
+        "prettier": "^3.5.3",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.29.0",
+        "uuid": "^11.1.0"
+    }
+}

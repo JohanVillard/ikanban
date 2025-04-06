@@ -1,0 +1,34 @@
+services:
+    db:
+        build:
+            context: ./backend/
+            dockerfile: ./database/Dockerfile
+        restart: always
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+            LANG: fr_FR.UTF-8
+            LC_ALL: fr_FR.UTF-8
+        ports:
+            - '5432:5432'
+        volumes:
+            - db-data:/var/lib/postgresql/data
+            - ./backend/database:/docker-entrypoint-initdb.d
+
+    api:
+        build:
+            context: ./backend/
+            dockerfile: ./src/Dockerfile
+        ports:
+            - '3000:3000'
+        env_file:
+            - .env
+        depends_on:
+            - db
+        volumes:
+            - ./backend:/app
+            - /app/node_modules # évite que le node_modules local écrase celui du conteneur
+
+volumes:
+    db-data:
