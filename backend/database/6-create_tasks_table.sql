@@ -1,7 +1,7 @@
 -- Créer une tâche
 
 CREATE TABLE IF NOT EXISTS tasks (
-	id UUID DEFAULT uuid_generate_v4() NOT NULL,
+	id UUID NOT NULL,
 	column_id UUID NOT NULL,
 	name VARCHAR(100) NOT NULL,
 	description VARCHAR(2000),
