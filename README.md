@@ -52,14 +52,8 @@ iKanban est une application de gestion de projet basée sur le concept de **Kanb
 ### Clonage du dépôt
 
 ```bash
-git clone <url-du-repo>
-cd backend
-```
-
-### Installation de dépendances
-
-```bash
-npm install
+git clone git@github.com:JohanVillard/ikanban.git 
+cd ikanban
 ```
 
 ### Création du fichier .env à la racine du projet
@@ -72,31 +66,48 @@ Avec votre éditeur de texte préféré, configurer les variables suivantes :
 
 ```
 # exemple
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432 // Port par défaut de Postgres
-DB_USER=user
-DB_PASSWORD=password
+DB_USER=db_user
+DB_PASSWORD=db_password
 DB_NAME=user_db
 NODE_ENV=development
 PORT=3000 // Port du serveur web
 ```
 
+### Installation de dépendances
+
+#### Backend
+
+```bash
+cd backend
+npm install
+```
+
 ---
 
-## Dépendances
+#### Frontend
 
-### **📦 Dépendances principales**
+---
 
+## Liste des dépendances
+
+### Backend
+
+#### **📦 Dépendances principales**
+
+- **bcrypt** - Permet de hacher des mots de passe.
 - **dotenv** – Charge les variables d'environnement depuis un fichier `.env`.
 - **express** – Framework minimaliste pour créer des serveurs web et des API.
 - **morgan** -de logging HTTP pour Express qui permet d’enregistrer les requêtes entrantes. Il est principalement utilisé pour le debug ou le monitoring
 - **pg** - Non-blocking PostgreSQL client for Node.js.
 
-### **🛠️ Dépendances de développement**
+#### **🛠️ Dépendances de développement**
 
 - **swagger-jsdoc** - Lit le code source annoté par JSDoc et génère une spécification OpenAPI (Swagger).
 - **swagger-ui-express** - Permet de générer de la documentation API à partir d'un fichier Swagger et de l'afficher dans une interface graphique
 - **eslint** – Analyse et détecte les erreurs de style et de syntaxe.
+- **@types/bcrypt** - Définition TypeScript pour bcrypt.
 - **@types/dotenv** - Définitions TypeScript pour le dotenv.
 - **@types/express** – Définitions TypeScript pour Express.js.
 - **@types/mocha** - Définitions TypeScript pour le module uuid.
@@ -106,8 +117,8 @@ PORT=3000 // Port du serveur web
 - **@types/swagger-jsdoc** - Définitions TypeScript pour swagger-jsdoc.
 - **@types/swagger-ui-express** - Définitions TypeScript pour swagger-ui-express.
 - **@types/uuid** - Définitions TypeScript pour uuid.
-- **@typescript-eslint/eslint-plugin** -
-- **@typescript-eslint/parser** -
+- **@typescript-eslint/eslint-plugin** - Plugin d'eslint qui fournit des règles de vérifications pour TypeScript. 
+- **@typescript-eslint/parser** - Analyseur eslint qui exploite TypeScript ESTree pour permettre à ESLint d'analyser le code source TypeScript.
 - **globals** - Un paquet qui fournit des définitions pour des variables globales communes (comme window, document, console, etc.) afin de ne pas générer d'erreurs dans les outils comme ESLint.
 - **mocha** - Framework de test JavaScript/TypeScript pour exécuter des tests unitaires, avec une API flexible.
 - **nodemon** – Redémarre automatiquement le serveur lors des modifications.
@@ -115,6 +126,8 @@ PORT=3000 // Port du serveur web
 - **ts-node** – Exécute du TypeScript sans compilation préalable.
 - **typescript** – Permet d'écrire du code TypeScript avec typage fort.
 - **uuid** - Module permettant de générer des identifiants uniques universels (UUID), utilisés pour identifier de manière unique des objets dans un système distribué.
+
+### Frontend
 
 ---
 
@@ -134,10 +147,10 @@ docker compose build
 
 ### 2. Démarrer les conteneurs
 
-Une fois l'image construite, vous pouvez démarrer les conteneurs avec la commande suivante :
+Une fois l'image construite, vous pouvez démarrer les conteneurs en mode détacher avec la commande suivante :
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
 ### 3. Accéder à l'application
@@ -145,7 +158,19 @@ docker compose up
 Une fois que les conteneurs sont en cours d'exécution, vous pouvez accéder à l'application via :
 http://localhost:3000.
 
-### 4. Arreter l'application
+### 4. Executer les fichier de test
+
+#### Backend
+
+Dans le dossier backend, vous pouver lancer les fichiers de test avec la commande suivante
+
+```bash
+npm run test
+```
+
+#### Frontend
+
+### 5. Arreter l'application
 
 Vous pouvez arréter l'application avec la commande suivante :
 

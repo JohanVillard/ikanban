@@ -5,7 +5,7 @@
     "scripts": {
         "start:dev": "npm run build && nodemon --legacy-watch --exec ts-node ./src/server.ts",
         "build": "tsc",
-        "test": "mocha -r ts-node/register test/**/*.test.ts",
+        "test": "docker compose exec api npx mocha",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "prettier": "prettier --write ."
@@ -15,13 +15,14 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "bcrypt": "^5.1.1",
         "dotenv": "^16.4.7",
         "express": "^5.1.0",
         "morgan": "^1.10.0",
         "pg": "^8.14.1"
     },
     "devDependencies": {
-        "@eslint/js": "^9.23.0",
+        "@types/bcrypt": "^5.0.2",
         "@types/dotenv": "^6.1.1",
         "@types/express": "^5.0.1",
         "@types/mocha": "^10.0.10",
@@ -42,6 +43,7 @@
         "prettier": "^3.5.3",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
+        "ts-mocha": "^11.1.0",
         "ts-node": "^10.9.2",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.29.0",
