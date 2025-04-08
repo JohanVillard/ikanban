@@ -1,10 +1,9 @@
 import pkg from 'pg';
 import * as dotenv from 'dotenv';
-import { log } from 'node:console';
 dotenv.config();
 
 const adminConfig = {
-	user: process.env.DB_ADMIN,
+	user: 'postgres',
 	password: process.env.DB_PASSWORD,
 	host: process.env.DB_HOST || 'localhost',
 	port: parseInt(process.env.DB_PORT || '5432'),
@@ -21,32 +20,6 @@ const testConfig = {
 
 const { Client } = pkg;
 
-export async function createRole(dbUser: string, dbPassword: string) {
-	const client = new Client(adminConfig);
-	await client.connect();
-
-	try {
-		// Vérifier si le rôle existe déjà pour éviter une erreur
-		const res = await client.query("SELECT 1 FROM pg_roles WHERE rolname = $1", [dbUser]);
-
-		if (res.rows.length === 0) {
-			console.log("Création de l'utilisateur de la BDD de test...");
-			await client.query(`CREATE ROLE ${dbUser} WITH LOGIN PASSWORD '${dbPassword.replace(/'/g, "''")} '`);
-
-			console.log("Permissions de créé la BDD...");
-			await client.query(`ALTER ROLE ${dbUser} CREATEDB`);
-
-			console.log(`Rôle ${dbUser} créé avec succès`);
-		} else {
-			console.log(`Le rôle ${dbUser} existe déjà`);
-		}
-	} catch (error) {
-		console.error("Erreur lors de la création de l'utilisateur : ", error);
-	} finally {
-		await client.end();
-	}
-}
-
 export async function createTestDB(dbName: string, dbUser: string) {
 	const client = new Client(adminConfig);
 	await client.connect();
@@ -56,48 +29,16 @@ export async function createTestDB(dbName: string, dbUser: string) {
 		await client.query(`DROP DATABASE IF EXISTS ${dbName}`);
 		await client.query(`CREATE DATABASE ${dbName} OWNER ${dbUser}`);
 		console.log("La base de données a été créée avec succès.");
-
-
 	} catch (error) {
-		console.error("Erreur lors de la création de la base de données :", error)
+		console.error("Erreur lors de la création de la base de données :", error);
 	} finally {
 		await client.end();
 	}
 }
-
-export async function giveDBPermissions(dbUser: string, db: string) {
-	const client = new Client(adminConfig);
-	await client.connect();
-
-	try {
-		await client.query(`GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${dbUser}`);
-
-		// Accord des privilèges d'usage et de création sur le schéma public
-		await client.query(`GRANT USAGE, CREATE ON SCHEMA public TO ${dbUser}`);
-
-		// Accorder des privilèges sur toutes les tables existantes
-		await client.query(`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${dbUser}`);
-
-		// Définir les privilèges par défaut pour toutes les tables futures
-		await client.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL PRIVILEGES ON TABLES TO ${dbUser}`);
-
-		console.log(`Privilèges accordés à ${dbUser} avec succès`);
-	} catch (error) {
-		console.error("Erreur lors de l'attribution des permissions: ", error);
-	} finally {
-		await client.end();
-	}
-}
-
-
-
-
 
 export async function createTables(dbUser: string, db: string) {
 	const client = new Client(testConfig);
 	await client.connect();
-
-	await client.query(`GRANT ALL PRIVILEGES ON DATABASE ${db} TO ${dbUser}`);
 
 	try {
 		console.log('Création de l\'extension uuid-ossp...');
@@ -146,6 +87,8 @@ export async function dropTestDB(dbName: string) {
 	await client.connect();
 
 	try {
+
+
 		console.log("Suppression de la BDD...");
 		await client.query(`DROP DATABASE IF EXISTS ${dbName}`);
 	} catch (error) {
@@ -154,33 +97,3 @@ export async function dropTestDB(dbName: string) {
 		await client.end();
 	}
 }
-
-export async function deleteRole(userName: string) {
-	const client = new Client(adminConfig);
-
-	try {
-		await client.connect();
-
-		console.log("Révocation de tous les privilèges de l'utilisateur test...");
-		await client.query(`REVOKE ALL PRIVILEGES ON DATABASE ${adminConfig.database} FROM ${userName}`);
-		await client.query(`REVOKE ALL PRIVILEGES ON SCHEMA public FROM ${userName}`);
-		await client.query(`REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM ${userName}`);
-		await client.query(`REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM ${userName}`);
-		await client.query(`REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM ${userName}`);
-
-		console.log("Transfert des privilèges restant à Postgres...");
-		await client.query(`REASSIGN OWNED BY ${userName} TO postgres`);
-		await client.query(`DROP OWNED BY ${userName}`)
-
-
-		console.log("Suppression de l'utilisateur...");
-		await client.query(`DROP ROLE ${userName}`);
-		console.log(`L'utilisateur ${userName} a été supprimé avec succès.`);
-
-	} catch (error) {
-		console.error(`Erreur en supprimant ${userName}:`, error);
-	} finally {
-		await client.end();
-	}
-}
-

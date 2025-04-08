@@ -2,11 +2,10 @@ import assert from 'assert';
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import config from '../src/config/config.js';
-import { createRole, createTestDB, deleteRole, dropTestDB, giveDBPermissions } from './setupDB.test.js';
-import { createTables } from './setupDB.test.js';
+import { createTestDB, createTables } from './setupDB.js';
 
 const { Pool } = pkg;
-const pool = new Pool({
+export const pool = new Pool({
 	user: config.db.user,
 	host: config.db.host,
 	database: config.db.database,
@@ -14,12 +13,8 @@ const pool = new Pool({
 	port: config.db.port,
 });
 
-console.log(config);
-
 before(async () => {
-	await createRole(config.db.user, config.db.password);
 	await createTestDB(config.db.database, config.db.user);
-	await giveDBPermissions(config.db.user, config.db.database)
 	await createTables(config.db.user, config.db.database);
 });
 
@@ -470,13 +465,4 @@ describe('Tests de base de données', () => {
 	});
 });
 
-after(async () => {
-	// Fermeture de toute les connexions
-	await pool.end();
 
-	// Puis suppression de la BDD
-	await dropTestDB(config.db.database);
-
-	// Enfin, suppression de l'utilisateur test
-	await deleteRole(config.db.user);
-});
