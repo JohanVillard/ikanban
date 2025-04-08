@@ -1,9 +1,15 @@
 import dotenv from 'dotenv';
-import path = require('path');
+import path from 'path';
 
-// Charger les variables d'environnement
-dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
-console.log(path.resolve(__dirname, '../../../.env'));
+const env = process.env.node_env === 'dev' ? '.env' : '.env.test';
+console.log(`chargement de l'environnement : ${env}`);
+
+// Utilisation de import.meta.url pour simuler __dirname
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+// charger les variables d'environnement
+dotenv.config({ path: path.resolve(__dirname, `../../../${env}`) });
+console.log(`chemin du fichier chargé : ${path.resolve(__dirname, `../../../${env}`)}`);
 
 
 interface Config {
