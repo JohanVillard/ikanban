@@ -126,6 +126,8 @@ npm install
 - **ts-node** – Exécute du TypeScript sans compilation préalable.
 - **typescript** – Permet d'écrire du code TypeScript avec typage fort.
 - **uuid** - Module permettant de générer des identifiants uniques universels (UUID), utilisés pour identifier de manière unique des objets dans un système distribué.
+- **chai** - Bibliothèque d'assertions BDD / TDD pour node et le navigateur qui peut être délicieusement associée à n'importe quel framework de test javascript(mocha dans ce projet).
+- **@types/chai** - Définition TypeScript pour chai.
 
 ### Frontend
 

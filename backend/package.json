@@ -2,10 +2,11 @@
     "name": "backend",
     "version": "1.0.0",
     "main": "index.js",
+    "type": "module",
     "scripts": {
         "start:dev": "npm run build && nodemon --legacy-watch --exec ts-node ./src/server.ts",
         "build": "tsc",
-        "test": "docker compose exec api npx mocha",
+        "test": "NODE_ENV=test node --loader ts-node/esm --experimental-specifier-resolution=node node_modules/mocha/bin/mocha.js 'test/**/*.test.ts'",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "prettier": "prettier --write ."
@@ -15,6 +16,7 @@
     "license": "ISC",
     "description": "",
     "dependencies": {
+        "@types/chai": "^5.2.1",
         "bcrypt": "^5.1.1",
         "dotenv": "^16.4.7",
         "express": "^5.1.0",
@@ -34,6 +36,7 @@
         "@types/uuid": "^10.0.0",
         "@typescript-eslint/eslint-plugin": "^8.29.0",
         "@typescript-eslint/parser": "^8.29.0",
+        "chai": "^5.2.0",
         "eslint": "^9.23.0",
         "eslint-config-prettier": "^10.1.1",
         "eslint-plugin-prettier": "^5.2.6",
