@@ -11,7 +11,7 @@ services:
             LANG: fr_FR.UTF-8
             LC_ALL: fr_FR.UTF-8
         ports:
-            - '5432:5432'
+            - '${DB_PORT}:5432'
         volumes:
             - db-data:/var/lib/postgresql/data
             - ./backend/sql:/docker-entrypoint-initdb.d
