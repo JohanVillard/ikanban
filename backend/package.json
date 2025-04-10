@@ -4,7 +4,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start:dev": "npm run build && nodemon --legacy-watch --exec ts-node ./src/server.ts",
+        "start:dev": "docker-compose up --build",
         "build": "tsc",
         "test": "NODE_ENV=test node --loader ts-node/esm --experimental-specifier-resolution=node node_modules/mocha/bin/mocha.js 'test/**/*.test.ts'",
         "lint": "eslint .",
@@ -14,17 +14,21 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "description": "",
     "dependencies": {
         "bcrypt": "^5.1.1",
+        "bcrypt-ts": "^6.0.0",
+        "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^5.1.0",
+        "express-validator": "^7.2.1",
         "morgan": "^1.10.0",
         "pg": "^8.14.1"
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
+        "@types/body-parser": "^1.19.5",
         "@types/chai": "^5.2.1",
+        "@types/cors": "^2.8.17",
         "@types/dotenv": "^6.1.1",
         "@types/express": "^5.0.1",
         "@types/mocha": "^10.0.10",
@@ -50,8 +54,14 @@
         "swagger-ui-express": "^5.0.1",
         "ts-mocha": "^11.1.0",
         "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
+        "tsx": "^4.19.3",
         "typescript": "^5.8.3",
         "typescript-eslint": "^8.29.0",
         "uuid": "^11.1.0"
-    }
+    },
+    "directories": {
+        "test": "test"
+    },
+    "description": ""
 }

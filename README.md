@@ -94,40 +94,52 @@ npm install
 
 ### Backend
 
-#### **📦 Dépendances principales**
+#### 📦 Dépendances de développement
 
-- **bcrypt** - Permet de hacher des mots de passe.
-- **dotenv** – Charge les variables d'environnement depuis un fichier `.env`.
-- **express** – Framework minimaliste pour créer des serveurs web et des API.
-- **morgan** -de logging HTTP pour Express qui permet d’enregistrer les requêtes entrantes. Il est principalement utilisé pour le debug ou le monitoring
-- **pg** - Non-blocking PostgreSQL client for Node.js.
+Voici une brève description des principales bibliothèques utilisées dans ce projet :
 
-#### **🛠️ Dépendances de développement**
+##### 🔧 Types (typages TypeScript)
+- **@types/bcrypt** : Fournit les définitions de types pour la bibliothèque `bcrypt`.
+- **@types/chai** : Typages pour la bibliothèque d'assertions `chai`.
+- **@types/cors** : Types pour le middleware `cors` (Cross-Origin Resource Sharing).
+- **@types/dotenv** : Types pour la gestion de fichiers `.env` avec `dotenv`.
+- **@types/express** : Fournit les types pour `express`, le framework web.
+- **@types/mocha** : Types pour le framework de test `mocha`.
+- **@types/morgan** : Typages pour le middleware de logging HTTP `morgan`.
+- **@types/node** : Typages globaux pour Node.js.
+- **@types/pg** : Types pour le module PostgreSQL `pg`.
+- **@types/sinon** : Fournit les types pour `sinon`, utilisé pour les mocks/spies en tests.
+- **@types/swagger-jsdoc** : Typages pour `swagger-jsdoc`, utilisé pour la génération de documentation Swagger.
+- **@types/swagger-ui-express** : Types pour `swagger-ui-express`, qui sert l'UI Swagger.
+- **@types/uuid** : Types pour la génération d’identifiants uniques avec `uuid`.
 
-- **swagger-jsdoc** - Lit le code source annoté par JSDoc et génère une spécification OpenAPI (Swagger).
-- **swagger-ui-express** - Permet de générer de la documentation API à partir d'un fichier Swagger et de l'afficher dans une interface graphique
-- **eslint** – Analyse et détecte les erreurs de style et de syntaxe.
-- **@types/bcrypt** - Définition TypeScript pour bcrypt.
-- **@types/dotenv** - Définitions TypeScript pour le dotenv.
-- **@types/express** – Définitions TypeScript pour Express.js.
-- **@types/mocha** - Définitions TypeScript pour le module uuid.
-- **@types/morgan** - Définitions TypeScript pour le Morgan.
-- **@types/node** – Définitions TypeScript pour les API Node.js.
-- **@types/pg** - Définitions TypeScript pour pg.
-- **@types/swagger-jsdoc** - Définitions TypeScript pour swagger-jsdoc.
-- **@types/swagger-ui-express** - Définitions TypeScript pour swagger-ui-express.
-- **@types/uuid** - Définitions TypeScript pour uuid.
-- **@typescript-eslint/eslint-plugin** - Plugin d'eslint qui fournit des règles de vérifications pour TypeScript. 
-- **@typescript-eslint/parser** - Analyseur eslint qui exploite TypeScript ESTree pour permettre à ESLint d'analyser le code source TypeScript.
-- **globals** - Un paquet qui fournit des définitions pour des variables globales communes (comme window, document, console, etc.) afin de ne pas générer d'erreurs dans les outils comme ESLint.
-- **mocha** - Framework de test JavaScript/TypeScript pour exécuter des tests unitaires, avec une API flexible.
-- **nodemon** – Redémarre automatiquement le serveur lors des modifications.
-- **prettier** – Formate automatiquement le code pour un style cohérent.
-- **ts-node** – Exécute du TypeScript sans compilation préalable.
-- **typescript** – Permet d'écrire du code TypeScript avec typage fort.
-- **uuid** - Module permettant de générer des identifiants uniques universels (UUID), utilisés pour identifier de manière unique des objets dans un système distribué.
-- **chai** - Bibliothèque d'assertions BDD / TDD pour node et le navigateur qui peut être délicieusement associée à n'importe quel framework de test javascript(mocha dans ce projet).
-- **@types/chai** - Définition TypeScript pour chai.
+##### 🧪 Tests
+- **chai** : Librairie d'assertions BDD/TDD.
+- **mocha** : Framework de tests.
+- **sinon** : Librairie de test pour les espions (spies), les mocks et les stubs.
+- **ts-mocha** : Permet d'exécuter Mocha avec TypeScript sans transpilation préalable.
+
+##### 🛠 Développement
+- **nodemon** : Redémarre automatiquement le serveur lors de modifications de fichiers.
+- **ts-node** : Permet d'exécuter du TypeScript directement sans compilation manuelle.
+- **tsx** : Exécuteur rapide de fichiers TypeScript avec support ESModules, utile en dev.
+- **tsconfig-paths** : Permet d'utiliser les alias définis dans `tsconfig.json`.
+
+##### 🧹 Qualité de code
+- **eslint** : Linter JavaScript/TypeScript.
+- **@typescript-eslint/parser** : Parseur ESLint pour TypeScript.
+- **@typescript-eslint/eslint-plugin** : Plugin ESLint avec des règles spécifiques à TypeScript.
+- **prettier** : Formateur de code.
+- **eslint-config-prettier** : Désactive les règles ESLint conflictuelles avec Prettier.
+- **eslint-plugin-prettier** : Intègre Prettier dans ESLint.
+- **globals** : Fournit des globales pour différents environnements (utile avec ESLint).
+
+##### 📚 Documentation
+- **swagger-jsdoc** : Génère la documentation Swagger à partir de commentaires JSDoc.
+- **swagger-ui-express** : Sert l’interface Swagger UI dans une app Express.
+
+##### 📦 Utilitaires
+- **uuid** : Génère des identifiants uniques.
 
 ### Frontend
 
