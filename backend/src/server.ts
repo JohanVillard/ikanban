@@ -1,6 +1,6 @@
-import app from './app.js';
-import config from './config/config.js';
-import connectDB from './config/postgres-config.js';
+import app from './app';
+import config from './config/config';
+import connectDB from './config/postgres-config';
 
 async function startServer() {
 	await connectDB();
