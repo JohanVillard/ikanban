@@ -1,5 +1,5 @@
 import pool from "../config/connectDB";
-import { User } from "../models/user";
+import User from "../models/user";
 
 class UserDb {
 	async createUser(id: string, name: string, email: string, passwordHash: string): Promise<User> {

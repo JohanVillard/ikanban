@@ -1,8 +1,7 @@
 import { genSaltSync, hashSync, compareSync } from "bcrypt-ts";
 import { v4 as uuidv4 } from 'uuid';
-import { User } from '../models/user';
+import User from '../models/user';
 import UserDb from "../repositories/userDb";
-import { log } from "console";
 
 class UserService {
 	async createUser(name: string, email: string, plainPassword: string): Promise<Partial<User>> {
