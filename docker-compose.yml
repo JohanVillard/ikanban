@@ -2,7 +2,7 @@ services:
     db:
         build:
             context: ./backend/
-            dockerfile: ./database/Dockerfile
+            dockerfile: ./sql/Dockerfile
         restart: always
         environment:
             POSTGRES_USER: ${DB_USER}
@@ -14,7 +14,7 @@ services:
             - '5432:5432'
         volumes:
             - db-data:/var/lib/postgresql/data
-            - ./backend/database:/docker-entrypoint-initdb.d
+            - ./backend/sql:/docker-entrypoint-initdb.d
 
     api:
         build:
@@ -29,6 +29,7 @@ services:
         volumes:
             - ./backend:/app
             - /app/node_modules # évite que le node_modules local écrase celui du conteneur
+        command: npx nodemon --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node' ./src/server.ts
 
 volumes:
     db-data:
