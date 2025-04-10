@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const env = process.env.node_env === 'dev' ? '.env' : '.env.test';
+const env = process.env.node_env === 'test' ? '.env.test' : 'env';
 console.log(`chargement de l'environnement : ${env}`);
 
 // Utilisation de import.meta.url pour simuler __dirname
