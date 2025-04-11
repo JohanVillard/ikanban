@@ -2,7 +2,7 @@ import pool from "../config/connectDB";
 import User from "../models/user";
 
 class UserDb {
-	async createUser(id: string, name: string, email: string, passwordHash: string): Promise<User> {
+	async create(id: string, name: string, email: string, passwordHash: string): Promise<User> {
 		try {
 			const query = 'INSERT INTO users (id, name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING *';
 			const values = [id, name, email, passwordHash];
@@ -15,7 +15,7 @@ class UserDb {
 		}
 	}
 
-	async getUserByMail(email: string): Promise<User | null> {
+	async findByMail(email: string): Promise<User | null> {
 		try {
 			const query = 'SELECT * FROM users WHERE email = $1';
 			const value = [email];
@@ -34,7 +34,7 @@ class UserDb {
 		}
 	}
 
-	async getUserById(id: string): Promise<User | null> {
+	async findById(id: string): Promise<User | null> {
 		try {
 			const query = `SELECT * FROM users WHERE id = $1`;
 			const value = [id];
@@ -61,7 +61,7 @@ class UserDb {
 		}
 	}
 
-	async updateUser(name: string, email: string, id: string): Promise<User | null> {
+	async update(name: string, email: string, id: string): Promise<User | null> {
 		try {
 			const query = `UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *`;
 			const values = [name, email, id];
@@ -75,7 +75,7 @@ class UserDb {
 		}
 	}
 
-	async deleteUser(id: string): Promise<boolean> {
+	async delete(id: string): Promise<boolean> {
 		try {
 			const query = 'DELETE FROM users WHERE id = $1';
 			const values = [id];
