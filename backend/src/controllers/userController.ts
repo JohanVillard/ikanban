@@ -3,7 +3,16 @@ import UserService from '../services/userService.js';
 import { validationResult } from 'express-validator';
 
 class UserController {
-	async createUser(req: Request, res: Response): Promise<void> {
+	private userService: UserService;
+
+	constructor() {
+		this.userService = new UserService();
+	}
+
+	// Il est nécessaire de lier les méthodes à la classe 
+	// lorsqu'elles sont utilisées par une bibliothèque externe 
+	// (comme Express ici) afin de préserver le bon contexte de `this`.
+	createUser = async (req: Request, res: Response): Promise<void> => {
 		// Vérifier s'il y a des erreurs de validation
 		const errors = validationResult(req);
 
@@ -14,29 +23,31 @@ class UserController {
 		}
 
 		const { name, email, password } = req.body;
-		const userService = new UserService();
 
 		try {
-			const user = await userService.createUser(name, email, password);
+			const user = await this.userService.createUser(name, email, password);
 			if (!user) {
 				res.sendStatus(404);
 				return;
 			}
 
 			res.status(201).json(user);
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Erreur en créant l'utilisateur: ", error)
-			res.sendStatus(500);
+
+			if (error.message === "Impossible de créer le compte.") {
+				res.status(409).json({ error: error.message });
+			} else {
+				res.status(500).json({ error: "Erreur serveur inconnue." });
+			}
 		}
 	}
 
-	async fetchUserById(req: Request, res: Response) {
-		const { id } = req.params;
-
-		const userService = new UserService();
+	fetchUserById = async (req: Request, res: Response): Promise<void> => {
+		const { userId } = req.params;
 
 		try {
-			const user = await userService.getUserById(id);
+			const user = await this.userService.getUserById(userId);
 			if (!user) {
 				res.sendStatus(404);
 				return;
@@ -49,11 +60,9 @@ class UserController {
 		};
 	}
 
-	async fetchAllUsers(req: Request, res: Response) {
-		const userService = new UserService();
-
+	fetchAllUsers = async (req: Request, res: Response): Promise<void> => {
 		try {
-			const users = await userService.getAllUsers();
+			const users = await this.userService.getAllUsers();
 			if (users.length === 0) {
 				res.sendStatus(404);
 				return;
@@ -66,7 +75,7 @@ class UserController {
 		}
 	}
 
-	async updateUser(req: Request, res: Response): Promise<void> {
+	updateUser = async (req: Request, res: Response): Promise<void> => {
 		// Vérifier s'il y a des erreurs de validation
 		const errors = validationResult(req);
 
@@ -78,10 +87,8 @@ class UserController {
 		const { id } = req.params;
 		const { name, email } = req.body;
 
-		const userService = new UserService();
-
 		try {
-			const updatedUser = await userService.updateUser(name, email, id)
+			const updatedUser = await this.userService.updateUser(name, email, id)
 			if (!updatedUser) {
 				res.sendStatus(404);
 				return;
@@ -94,13 +101,11 @@ class UserController {
 		}
 	}
 
-	async deleteUser(req: Request, res: Response) {
+	deleteUser = async (req: Request, res: Response): Promise<void> => {
 		const { id } = req.params;
 
-		const userService = new UserService();
-
 		try {
-			const isDeleted = await userService.deleteUser(id)
+			const isDeleted = await this.userService.deleteUser(id)
 			if (!isDeleted) {
 				res.sendStatus(404);
 				return;
