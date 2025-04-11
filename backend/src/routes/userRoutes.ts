@@ -59,8 +59,8 @@ const userController = new UserController();
  *       500:
  *         description: Erreur serveur lors de la création de l'utilisateur
  */
-
 router.post('/user', userValidationSchema, userController.createUser)
+
 /**
  * @swagger
  * /user/list:
@@ -135,8 +135,6 @@ router.get('/user/list', userController.fetchAllUsers);
  *         description: Erreur lors de la récupération de l'utilisateur
  */
 router.get('/user/:id', userController.fetchUserById);
-
-
 
 /**
  * @swagger
