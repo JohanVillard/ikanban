@@ -4,21 +4,28 @@ import User from '../models/user';
 import UserDb from "../repositories/userDb";
 
 class UserService {
+	private userDb: UserDb;
+
+	constructor() {
+		this.userDb = new UserDb();
+	}
+
 	async createUser(name: string, email: string, plainPassword: string): Promise<Partial<User>> {
 		const salt = genSaltSync(10);
 		const hash = hashSync(plainPassword, salt);
 
 		const id = uuidv4();
 
-		const userDb = new UserDb();
-
-		const user = await userDb.getUserByMail(email);
+		const user = await this.userDb.findByMail(email);
 		if (user) {
-			throw new Error("L'email est déjà utilisé.")
+			throw new Error("Impossible de créer le compte.");
 		}
 
 		try {
-			const user = await userDb.createUser(id, name, email, hash)
+			const user = await this.userDb.create(id, name, email, hash)
+			if (!user) {
+				throw new Error("La création de l'utilisateur a échoué.")
+			}
 
 			return {
 				id: user.id,
@@ -27,22 +34,18 @@ class UserService {
 			};
 		} catch (error) {
 			console.error("Erreur lors de la création de l'utilisateur (Service):", error);
-			throw new Error("Impossible de créer l'utilisateur.");
+			throw error;
 		}
 	}
 
 	async verifyPassword(email: string, password: string): Promise<boolean> {
-		const userDb = new UserDb();
-
 		try {
-			const user = await userDb.getUserByMail(email)
+			const user = await this.userDb.findByMail(email)
 			if (!user) {
 				throw new Error("L'utilisateur n'existe pas.");
 			}
 
 			const hash = user.passwordHash;
-			console.log("hash: ", hash);
-
 
 			return compareSync(password, hash);
 		} catch (error) {
@@ -53,9 +56,7 @@ class UserService {
 
 	async getUserById(id: string): Promise<Partial<User>> {
 		try {
-			const userDb = new UserDb();
-
-			const user = await userDb.getUserById(id);
+			const user = await this.userDb.findById(id);
 			if (!user) {
 				throw new Error("L'utilisateur n'existe pas.");
 			}
@@ -73,9 +74,7 @@ class UserService {
 
 	async getAllUsers(): Promise<User[]> {
 		try {
-			const userDb = new UserDb();
-
-			const users = await userDb.findAll();
+			const users = await this.userDb.findAll();
 			if (users.length === 0) {
 				throw new Error("Aucun utilisateur n'est enregistré.");
 			}
@@ -89,9 +88,7 @@ class UserService {
 
 	async updateUser(name: string, email: string, id: string): Promise<Partial<User>> {
 		try {
-			const userDb = new UserDb();
-
-			const updatedUser = await userDb.updateUser(name, email, id);
+			const updatedUser = await this.userDb.update(name, email, id);
 			if (!updatedUser) {
 				throw new Error("L'utilisateur n'existe pas.");
 			}
@@ -109,9 +106,7 @@ class UserService {
 
 	async deleteUser(id: string): Promise<boolean> {
 		try {
-			const userDb = new UserDb();
-
-			const userDeleted = await userDb.deleteUser(id);
+			const userDeleted = await this.userDb.delete(id);
 			if (!userDeleted) {
 				throw new Error("L'utilisateur n'existe pas.");
 			}
