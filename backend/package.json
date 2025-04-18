@@ -9,28 +9,25 @@
         "test": "NODE_ENV=test node --loader ts-node/esm --experimental-specifier-resolution=node node_modules/mocha/bin/mocha.js 'test/**/*.test.ts'",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
-        "prettier": "prettier --write ."
+        "prettier": "prettier --write .",
+        "docs": "jsdoc -c jsdoc.json"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
     "dependencies": {
-        "bcrypt": "^5.1.1",
         "bcrypt-ts": "^6.0.0",
         "cors": "^2.8.5",
         "dotenv": "^16.4.7",
         "express": "^5.1.0",
         "express-validator": "^7.2.1",
+        "jsonwebtoken": "^9.0.2",
         "morgan": "^1.10.0",
         "pg": "^8.14.1"
     },
     "devDependencies": {
-        "@types/bcrypt": "^5.0.2",
-        "@types/body-parser": "^1.19.5",
         "@types/chai": "^5.2.1",
         "@types/cors": "^2.8.17",
         "@types/dotenv": "^6.1.1",
         "@types/express": "^5.0.1",
+        "@types/jsonwebtoken": "^9.0.9",
         "@types/mocha": "^10.0.10",
         "@types/morgan": "^1.9.9",
         "@types/node": "^22.14.0",
@@ -42,6 +39,7 @@
         "@typescript-eslint/eslint-plugin": "^8.29.0",
         "@typescript-eslint/parser": "^8.29.0",
         "chai": "^5.2.0",
+        "chai-http": "^5.1.1",
         "eslint": "^9.23.0",
         "eslint-config-prettier": "^10.1.1",
         "eslint-plugin-prettier": "^5.2.6",
@@ -62,6 +60,5 @@
     },
     "directories": {
         "test": "test"
-    },
-    "description": ""
+    }
 }

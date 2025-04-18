@@ -52,7 +52,7 @@ iKanban est une application de gestion de projet basée sur le concept de **Kanb
 ### Clonage du dépôt
 
 ```bash
-git clone git@github.com:JohanVillard/ikanban.git 
+git clone git@github.com:JohanVillard/ikanban.git
 cd ikanban
 ```
 
@@ -94,11 +94,30 @@ npm install
 
 ### Backend
 
+#### 📦 Dépendances de production
+
+- **bcrypt-ts** : Alternative TypeScript native à bcrypt, souvent utilisée quand bcrypt classique pose problème avec des bindings natifs.
+
+- **cors** : Middleware pour gérer les permissions de Cross-Origin Resource Sharing.
+
+- **dotenv** : Charge les variables d’environnement depuis un fichier .env.
+
+- **express** : Framework minimaliste pour construire des applications web avec Node.js.
+
+- **express-validator** : Middleware pour valider et assainir les requêtes HTTP dans Express.
+
+- **jsonwebtoken** : Gère la création et la vérification de JSON Web Tokens (JWT) pour l’authentification.
+
+- **morgan** : Middleware de logging HTTP.
+
+- **pg** : Client PostgreSQL pour Node.js.
+
 #### 📦 Dépendances de développement
 
 Voici une brève description des principales bibliothèques utilisées dans ce projet :
 
 ##### 🔧 Types (typages TypeScript)
+
 - **@types/bcrypt** : Fournit les définitions de types pour la bibliothèque `bcrypt`.
 - **@types/chai** : Typages pour la bibliothèque d'assertions `chai`.
 - **@types/cors** : Types pour le middleware `cors` (Cross-Origin Resource Sharing).
@@ -114,18 +133,21 @@ Voici une brève description des principales bibliothèques utilisées dans ce p
 - **@types/uuid** : Types pour la génération d’identifiants uniques avec `uuid`.
 
 ##### 🧪 Tests
+
 - **chai** : Librairie d'assertions BDD/TDD.
 - **mocha** : Framework de tests.
 - **sinon** : Librairie de test pour les espions (spies), les mocks et les stubs.
 - **ts-mocha** : Permet d'exécuter Mocha avec TypeScript sans transpilation préalable.
 
 ##### 🛠 Développement
+
 - **nodemon** : Redémarre automatiquement le serveur lors de modifications de fichiers.
 - **ts-node** : Permet d'exécuter du TypeScript directement sans compilation manuelle.
 - **tsx** : Exécuteur rapide de fichiers TypeScript avec support ESModules, utile en dev.
 - **tsconfig-paths** : Permet d'utiliser les alias définis dans `tsconfig.json`.
 
 ##### 🧹 Qualité de code
+
 - **eslint** : Linter JavaScript/TypeScript.
 - **@typescript-eslint/parser** : Parseur ESLint pour TypeScript.
 - **@typescript-eslint/eslint-plugin** : Plugin ESLint avec des règles spécifiques à TypeScript.
@@ -135,10 +157,12 @@ Voici une brève description des principales bibliothèques utilisées dans ce p
 - **globals** : Fournit des globales pour différents environnements (utile avec ESLint).
 
 ##### 📚 Documentation
+
 - **swagger-jsdoc** : Génère la documentation Swagger à partir de commentaires JSDoc.
 - **swagger-ui-express** : Sert l’interface Swagger UI dans une app Express.
 
 ##### 📦 Utilitaires
+
 - **uuid** : Génère des identifiants uniques.
 
 ### Frontend

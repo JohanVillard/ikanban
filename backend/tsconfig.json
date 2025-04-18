@@ -1,28 +1,23 @@
 {
-  "compilerOptions": {
-    "module": "ESNext",  // Utilise les modules ES natifs
-    "moduleResolution": "Node",  // Résolution des modules de type Node
-    "target": "ESNext",  // Cible la dernière version de JavaScript
-    "outDir": "./dist",  // Dossier de sortie des fichiers compilés
-    "esModuleInterop": true,  // Active l'interopérabilité entre les modules ES et CommonJS
-    "skipLibCheck": true,  // Ignore les vérifications de types dans les bibliothèques
-    "forceConsistentCasingInFileNames": true,  // Assure la cohérence des noms de fichiers
-    "strict": true,  // Active toutes les vérifications strictes
-    "baseUrl": "./src",  // Définit la racine pour les chemins relatifs
-    "paths": {
-      "@config/*": ["config/*"]  // Crée un alias pour accéder à src/config
-    }
-  },
-  "ts-node": {
-    "transpileOnly": true,  // Pour que ts-node ne fasse que la transpilation sans vérification de type
     "compilerOptions": {
-      "module": "ESNext",  // Assurez-vous que ts-node utilise aussi les modules ES
-      "target": "ESNext"
-    }
-  },
-  "include": ["src/**/*"],  // Inclut les fichiers TypeScript dans le dossier src
-  "exclude": ["node_modules"]  // Exclut les fichiers dans le dossier node_modules
+        "module": "ESNext", // Utilise les modules ES natifs
+        "moduleResolution": "Node", // Résolution des modules de type Node
+        "target": "ESNext", // Cible la dernière version de JavaScript
+        "outDir": "./dist", // Dossier de sortie des fichiers compilés
+        "esModuleInterop": true, // Active l'interopérabilité entre les modules ES et CommonJS
+        "skipLibCheck": true, // Ignore les vérifications de types dans les bibliothèques
+        "forceConsistentCasingInFileNames": true, // Assure la cohérence des noms de fichiers
+        "strict": true, // Active toutes les vérifications strictes
+        "baseUrl": "./src", // Définit la racine pour les chemins relatifs
+        "typeRoots": ["./node_modules/@types", "./src/types"]
+    },
+    "ts-node": {
+        "transpileOnly": true, // Pour que ts-node ne fasse que la transpilation sans vérification de type
+        "compilerOptions": {
+            "module": "ESNext", // Assurez-vous que ts-node utilise aussi les modules ES
+            "target": "ESNext"
+        }
+    },
+    "include": ["src/types/**/*.d.ts", "src/**/*.ts"], // Inclut les fichiers TypeScript dans le dossier src
+    "exclude": ["node_modules"] // Exclut les fichiers dans le dossier node_modules
 }
-
-
-
