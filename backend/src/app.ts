@@ -3,8 +3,11 @@ import morgan from 'morgan';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocs from './config/swagger';
-import userRoutes from '../src/routes/userRoutes';
-import boardRoutes from '../src/routes/boardRoutes'
+import authRoutes from '../src/api/v1/routes/auth';
+import userRoutes from '../src/api/v1/routes/userRoutes';
+import boardRoutes from '../src/api/v1/routes/boardRoutes';
+import columnRoutes from '../src/api/v1/routes/columnRoutes';
+import taskRoutes from '../src/api/v1/routes/taskRoutes';
 
 const app = express();
 
@@ -16,7 +19,10 @@ app.use(morgan('dev'));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use('/api', userRoutes);
-app.use('/api', boardRoutes);
+app.use('/api/v1', authRoutes);
+app.use('/api/v1', userRoutes);
+app.use('/api/v1', boardRoutes);
+app.use('/api/v1', columnRoutes);
+app.use('/api/v1', taskRoutes);
 
 export default app;
