@@ -1,5 +1,5 @@
 services:
-    db:
+    ikanban_db:
         build:
             context: ./backend/
             dockerfile: ./sql/Dockerfile
@@ -16,7 +16,7 @@ services:
             - db-data:/var/lib/postgresql/data
             - ./backend/sql:/docker-entrypoint-initdb.d
 
-    api:
+    ikanban_api:
         build:
             context: ./backend/
             dockerfile: ./src/Dockerfile
@@ -25,11 +25,21 @@ services:
         env_file:
             - .env
         depends_on:
-            - db
+            - ikanban_db
         volumes:
             - ./backend:/app
             - /app/node_modules # évite que le node_modules local écrase celui du conteneur
         command: npx nodemon --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node' ./src/server.ts
+
+    ikanban_front:
+        build:
+            context: ./front/
+            dockerfile: ./Dockerfile
+        ports:
+          - '5173:5173'
+        volumes:
+            - ./front:/app
+            - /app/node_modules
 
 volumes:
     db-data:
