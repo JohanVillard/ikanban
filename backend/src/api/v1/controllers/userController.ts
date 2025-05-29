@@ -24,14 +24,14 @@ class UserController {
             return;
         }
 
-        const { name, email, password, confirmationPassword } = req.body;
+        const { name, email, password, passconf } = req.body;
 
         try {
             const user = await this.userService.createUser(
                 name,
                 email,
                 password,
-                confirmationPassword
+                passconf
             );
 
             if (!user) {
