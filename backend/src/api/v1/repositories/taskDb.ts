@@ -138,7 +138,7 @@ class TaskDb {
      * @returns {Promise<TaskDb | null>} La tâche trouvée ou `null` si elle n'existe pas.
      * @throws {Error} Si une erreur survient lors de la récupération de la tâche.
      */
-    async findByNameAndColumnIdAndBoardId(
+    async findByNameAndBoardId(
         name: string,
         columnId: string
     ): Promise<TaskDbRecord | null> {
@@ -155,8 +155,8 @@ class TaskDb {
 
             // Il faut s'assurer que le nom de la tâche nexiste pas déjà dans tout le tableau
             const query =
-                'SELECT tasks.* FROM tasks JOIN columns ON tasks.column_id = columns.id WHERE tasks.name = $1 AND tasks.column_id = $2 AND columns.board_id = $3';
-            const values = [name, columnId, boardId];
+                'SELECT tasks.* FROM tasks JOIN columns ON tasks.column_id = columns.id WHERE tasks.name = $1 AND columns.board_id = $2';
+            const values = [name, boardId];
 
             const res = await pool.query(query, values);
             if (res.rows.length === 0) {
