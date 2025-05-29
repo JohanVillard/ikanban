@@ -18,6 +18,7 @@ function CredentialsForm(cssSelector: string): void {
         const credentialsForm = document.createElement('form');
         credentialsForm.classList.add('forms');
         container.appendChild(credentialsForm);
+        credentialsForm.noValidate = true;
 
         // Je crée les boutons correspondant à la page visitée
         const path = window.location.pathname;

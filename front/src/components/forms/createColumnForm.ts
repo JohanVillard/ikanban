@@ -1,5 +1,9 @@
 import { createColumn } from '../../services/columnService';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import ErrorContainer from '../messageContainer/ErrorContainer';
 import ValidationContainer from '../messageContainer/ValidationContainer';
 import CancelBtn from '../buttons/CancelBtn';
@@ -41,12 +45,16 @@ function createColumnForm(cssSelector: string): void {
 
             const name = createInput?.value;
 
-            const result = await createColumn(boardId, name || '');
-
             cleanFormErrorMsg();
-            handleFormResponse(result);
 
-            if (result.success) goTo(`/board?boardId=${boardId}`);
+            const isDataValid = handleFrontValidationError({ name: name });
+            if (isDataValid) {
+                const result = await createColumn(boardId, name || '');
+
+                handleFormResponse(result);
+
+                if (result.success) goTo(`/board?boardId=${boardId}`);
+            }
         });
 
         // Je crée et définis le comportement du bouton Annuler

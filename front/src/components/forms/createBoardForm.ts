@@ -1,5 +1,9 @@
 import { createBoard } from '../../services/boardServices';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import ValidationContainer from '../messageContainer/ValidationContainer';
 import ErrorContainer from '../messageContainer/ErrorContainer';
 import CancelBtn from '../buttons/CancelBtn';
@@ -35,10 +39,16 @@ function createBoardForm(cssSelector: string): void {
 
             const name = createInput?.value;
 
-            const result = await createBoard(name || '');
             cleanFormErrorMsg();
-            handleFormResponse(result);
-            if (result.success) goTo('/boards');
+
+            // Je valide les données niveau front
+            const isDataValid = handleFrontValidationError({ name: name });
+            if (isDataValid) {
+                const result = await createBoard(name || '');
+                // et niveau back
+                handleFormResponse(result);
+                if (result.success) goTo('/boards');
+            }
         });
 
         // Je crée et défini le comportement du bouton Annuler

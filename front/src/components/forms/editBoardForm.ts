@@ -1,5 +1,9 @@
 import { fetchBoardById, updateBoard } from '../../services/boardServices';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import { goTo } from '../../utils/navigation';
 import CancelBtn from '../buttons/CancelBtn';
 import EditBtn from '../buttons/EditBtn';
@@ -45,11 +49,16 @@ async function editBoardForm(cssSelector: string) {
             e.preventDefault();
 
             const name = editInput.value;
-            const result = await updateBoard(boardId, name);
 
             cleanFormErrorMsg();
-            handleFormResponse(result);
-            if (result.success) goTo('/boards');
+            const isDataValid = handleFrontValidationError({ name: name });
+            if (isDataValid) {
+                const result = await updateBoard(boardId, name);
+
+                handleFormResponse(result);
+
+                if (result.success) goTo('/boards');
+            }
         });
 
         const cancelBtn = CancelBtn('Annuler');

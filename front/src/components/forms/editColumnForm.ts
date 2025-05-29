@@ -2,7 +2,11 @@ import {
     fetchColumnByIdAndBoard,
     updateColumn,
 } from '../../services/columnService';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import { goTo } from '../../utils/navigation';
 import CancelBtn from '../buttons/CancelBtn';
 import EditBtn from '../buttons/EditBtn';
@@ -44,11 +48,16 @@ async function editColumnForm(cssSelector: string) {
             e.preventDefault();
 
             const name = editInput.value;
-            const result = await updateColumn(boardId, columnId, name);
 
             cleanFormErrorMsg();
-            handleFormResponse(result);
-            if (result.success) goTo(`/board?boardId=${boardId}`);
+
+            const isDataValid = handleFrontValidationError({ name: name });
+            if (isDataValid) {
+                const result = await updateColumn(boardId, columnId, name);
+
+                handleFormResponse(result);
+                if (result.success) goTo(`/board?boardId=${boardId}`);
+            }
         });
 
         const cancelBtn = CancelBtn('Annuler');

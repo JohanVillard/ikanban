@@ -4,7 +4,11 @@ import {
     updateTaskDetails,
     updateTaskStatus,
 } from '../../services/taskServices';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import { goTo } from '../../utils/navigation';
 import EditBtn from '../buttons/EditBtn';
 import DescriptionInput from '../labeledInput/DescriptionInput';
@@ -73,6 +77,8 @@ async function editTaskForm(cssSelector: string) {
                 description: descriptionInput.value,
             };
 
+            cleanFormErrorMsg();
+
             const result = await updateTaskDetails(
                 boardId,
                 columnId,
@@ -80,10 +86,12 @@ async function editTaskForm(cssSelector: string) {
                 taskDetails
             );
 
-            cleanFormErrorMsg();
-            handleFormResponse(result);
+            const isDataValid = handleFrontValidationError(taskDetails);
+            if (isDataValid) {
+                handleFormResponse(result);
 
-            if (result.success) goTo(`/board?boardId=${boardId}`);
+                if (result.success) goTo(`/board?boardId=${boardId}`);
+            }
         });
 
         // Je crée un bouton d'annulation

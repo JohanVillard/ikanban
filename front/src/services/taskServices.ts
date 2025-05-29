@@ -242,9 +242,7 @@ export async function updateTaskDetails(
 
         return data as ApiSuccess<Partial<Task>>;
     } catch (error) {
-        console.error(
-            `La mise à jour de l'id de la colonne a échouée : ${error}`
-        );
+        console.error(`La mise à jour de l'id de la tâche a échoué : ${error}`);
         throw error;
     }
 }

@@ -1,8 +1,12 @@
 import { authUser, updateUser } from '../../services/authServices';
 import registerUser from '../../services/registerServices';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
-import { goBack } from '../../utils/navigation';
-import { formDataToJSON } from '../../utils/utils';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
+import { goBack, goTo } from '../../utils/navigation';
+import { jsObjectToJSON } from '../../utils/utils';
 
 function handleSubmitFormData(formUserData: HTMLFormElement): void {
     formUserData.addEventListener('submit', async (event) => {
@@ -16,31 +20,42 @@ function handleSubmitFormData(formUserData: HTMLFormElement): void {
         // Je récupére les données du formulaire
         const formData = new FormData(formUserData);
 
-        // On ne peux pas passer directement une instance de FormData dans fetch.
-        // Pour envoyer notre requête, nous devons la convertir en JSON.
-        const formDataJsonString = formDataToJSON(formData);
+        // Transformation en objet JS
+        const jsObjectData = Object.fromEntries(formData.entries());
 
-        // Ajouter les fonctions de soumission assiciées au chemin de la page
-        const routeFunctionMapping: Record<string, Function> = {
-            '/login': authUser,
-            '/register': registerUser,
-            '/profile': updateUser,
-        };
+        const isDataValid = handleFrontValidationError(jsObjectData);
+        console.log(isDataValid);
 
-        console.log(formDataJsonString);
+        if (isDataValid) {
+            // On ne peux pas passer directement une instance de FormData dans fetch.
+            // Pour envoyer notre requête, nous devons la convertir en JSON.
+            const formDataJsonString = jsObjectToJSON(jsObjectData);
 
-        const routeFunction = routeFunctionMapping[path];
+            // Ajouter les fonctions de soumission associées au chemin de la page
+            // ainsi que les fonctions de navigations
+            // Typage à améliorer
+            const routeFunctionMapping: Record<string, Function[]> = {
+                '/login': [authUser, () => goTo('/boards')],
+                '/register': [registerUser, goBack],
+                '/profile': [updateUser, goBack],
+            };
 
-        try {
-            if (routeFunction) {
-                const result = await routeFunction(formDataJsonString);
-                handleFormResponse(result);
-                if (result.success) goBack();
-            } else {
-                console.log(`Aucune fonction définie pour le chemin : ${path}`);
+            const routeFunction = routeFunctionMapping[path];
+
+            try {
+                if (routeFunction) {
+                    const result = await routeFunction[0](formDataJsonString);
+                    // Je valide le backend et remonte les erreurs
+                    handleFormResponse(result);
+                    if (result.success) routeFunction[1]();
+                } else {
+                    console.log(
+                        `Aucune fonction définie pour le chemin : ${path}`
+                    );
+                }
+            } catch (error) {
+                console.error('Réponse inattendue du serveur', error);
             }
-        } catch (error) {
-            console.error('Réponse inattendue du serveur', error);
         }
     });
 }

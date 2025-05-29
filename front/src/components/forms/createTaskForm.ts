@@ -1,10 +1,16 @@
 import { createTask } from '../../services/taskServices';
-import { cleanFormErrorMsg, handleFormResponse } from '../../utils/DOMManip';
+import {
+    cleanFormErrorMsg,
+    handleFormResponse,
+    handleFrontValidationError,
+} from '../../utils/userMessageHandlers';
 import { goTo } from '../../utils/navigation';
 import CancelBtn from '../buttons/CancelBtn';
 import SubmitBtn from '../buttons/SubmitBtn';
 import DescriptionInput from '../labeledInput/DescriptionInput';
 import NameInput from '../labeledInput/NameInput';
+import ValidationContainer from '../messageContainer/ValidationContainer';
+import ErrorContainer from '../messageContainer/ErrorContainer';
 
 async function createTaskForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -19,11 +25,15 @@ async function createTaskForm(cssSelector: string) {
         const createForm = document.createElement('form');
         createForm.id = 'create-form';
         container.appendChild(createForm);
+        createForm.noValidate = true;
 
         createForm.appendChild(NameInput('Entrez le nom de la tâche'));
         createForm.appendChild(
             DescriptionInput('Entrez la description de la tâche')
         );
+        // Je communique le résultat de la soumission
+        createForm.appendChild(ValidationContainer());
+        createForm.appendChild(ErrorContainer());
 
         createForm.appendChild(SubmitBtn('Créer'));
 
@@ -38,11 +48,16 @@ async function createTaskForm(cssSelector: string) {
             const description = taskDescription?.value;
             const taskDetails = { name: name, description: description };
 
-            const result = await createTask(boardId, columnId, taskDetails);
-
             cleanFormErrorMsg();
-            handleFormResponse(result);
-            if (result.success) goTo(`/board?boardId=${boardId}`);
+
+            const isDataValid = handleFrontValidationError(taskDetails);
+            if (isDataValid) {
+                const result = await createTask(boardId, columnId, taskDetails);
+
+                handleFormResponse(result);
+
+                if (result.success) goTo(`/board?boardId=${boardId}`);
+            }
         });
 
         const cancelBtn = createForm.appendChild(CancelBtn('Annuler'));
