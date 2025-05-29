@@ -1,0 +1,22 @@
+#create-container {
+    max-width: 500px; /* Largeur du conteneur */
+    margin: 2rem auto; /* auto permet de centrer hoizontalement */
+    padding: 2rem;
+    box-sizing: border-box; /* Important pour bien gérer le padding */
+}
+
+/* Responsive : écrans ≤ 768px (tablettes, téléphones) */
+@media (max-width: 768px) {
+    #create-container {
+        padding: 1.5rem;
+        margin: 1.5rem auto;
+    }
+}
+
+/* Très petits écrans ≤ 480px (mobiles étroits) */
+@media (max-width: 480px) {
+    #create-container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+}

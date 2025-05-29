@@ -1,0 +1,16 @@
+/* Centrer logo */
+#ikanban-logo {
+    width: 35vw;
+    max-width: 253px;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+}
+
+/* Responsive media query */
+@media screen and (max-width: 480px) {
+    #ikanban-logo {
+        width: 100vw;
+        margin-bottom: 40px;
+    }
+}

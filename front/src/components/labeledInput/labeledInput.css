@@ -1,0 +1,98 @@
+/* Input Container */
+.input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Label */
+.label-container {
+    font-size: 1rem;
+    color: var(--color-text);
+    font-weight: bold;
+    margin-top: 0.8rem;
+}
+
+/* Champ de saisie */
+.input-field {
+    height: 2.5rem;
+    padding: 12px 16px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+
+    background: var(--color-input-background);
+    border: 1px solid var(--color-idle-border);
+    border-radius: 8px;
+
+    color: var(--color-input-text);
+
+    font-size: 1rem;
+}
+
+/* Message d'erreur */
+.error-input {
+    font-size: 0.875rem;
+    color: var(--color-error-message);
+    font-weight: 400;
+    margin-bottom: 2rem;
+}
+
+/* Affichage actif d'une erreur */
+.error-input.active {
+    display: block;
+}
+
+/* Bouton de bascule de visibilité de mot de passe */
+.input-wrapper {
+    display: flex;
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding-right: 2.5rem; /* Espace pour le bouton */
+}
+
+#password-toggle-button {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-input-password-toggle-icon);
+    font-size: 1rem;
+}
+
+.input-help {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+#password-toggle-button:hover {
+    color: var(--color-input-password-toggle-icon-hover);
+}
+
+@media (max-width: 600px) {
+    .label {
+        font-size: 0.9rem;
+    }
+
+    .input-field {
+        font-size: 0.95rem;
+        padding: 10px 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .input-help {
+        position: absolute;
+        left: -9999px;
+    }
+}

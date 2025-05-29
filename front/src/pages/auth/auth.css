@@ -1,0 +1,29 @@
+@import '../../styles/variables.css';
+
+#app #credentials-card {
+    min-height: 100vh; /* prend toute la hauteur de l'écran */
+    display: flex;
+    justify-content: center; /* centre horizontalement */
+    align-items: center; /* centre verticalement */
+}
+
+/* Auth Card */
+#credentials-card {
+    max-width: 500px; /* Largeur du conteneur */
+    margin: 2rem auto; /* auto permet de centrer hoizontalement */
+    padding: 2rem;
+    gap: 40px;
+    width: 400px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Responsive media query */
+@media screen and (max-width: 480px) {
+    #credentials-card {
+        padding: 1rem;
+        gap: 90px;
+    }
+}

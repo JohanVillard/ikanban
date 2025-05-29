@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    /* Couleurs */
+    --color-background: #f5f5f3;
+
+    /* Header */
+    --color-header-background: #637373;
+    --color-header-title-app: white;
+    --color-header-title-page: #eafbf4;
+    --color-header-nav-link: #eafbf4;
+    --color-header-nav-link-hover: #4d5d5d;
+
+    /* Card */
+    --color-card: #dbdbdb;
+    --color-text: #333333;
+
+    /* Form */
+    /* Input */
+    --color-input-background: #ffffff;
+    --color-idle-border: #d9d9d9;
+    --color-input-text: #333;
+    --color-input-password-toggle-icon: #555;
+    --color-input-password-toggle-icon-hover: #000;
+
+    /* Button */
+    --color-submit-btn: #637373;
+    --color-submit-btn-hover: #679b9b;
+    --color-submit-btn-txt: #ffffff;
+    --color-submit-btn-hover-txt: #ffffff;
+    --color-submit-btn-hover-border: #ffffff;
+
+    --color-cancel-btn: #f44336;
+    --color-cancel-btn-hover: #e6e6e6;
+    --color-cancel-btn-txt: #333333;
+    --color-cancel-btn-text-hover: #333333;
+    --color-cancel-btn-border: #333333;
+
+    --color-delete-btn: #ff6b6b;
+    --color-delete-btn-hover: #b71c1c;
+    --color-delete-btn-txt: #ffffff;
+
+    --color-is-done-btn: #c8e6c9;
+    --color-is-done-btn-hover: #a5d6a7;
+    --color-is-done-btn-txt: #4a4a4a;
+
+    --color-not-is-done-btn: #fff9c4;
+    --color-not-is-done-btn-hover: #fff176;
+    --color-not-is-done-btn-txt: #8a6d3b;
+
+    --color-grab-zone: #679b9b;
+
+    /* Message */
+    --color-message-validation: #e6ffe6;
+    --color-message-validation-text: green;
+    --color-message-error: #ffe6e6;
+    --color-message-error-text: red;
+
+    /* Board */
+    --color-board-item: #c5d6e0;
+    --color-board-item-hover: #679b9b;
+
+    --color-column-background: #fff;
+
+    --color-task-list-background: #c5d6e0;
+
+    /* Pas encore utilisé */
+    --color-error-message: #a81a1a;
+
+    /* Bureau */
+    --color-board-add-btn: #637373;
+    --color-board-add-btn-hover: #679b9b;
+    --color-board-add-btn-txt: #ffffff;
+
+    /* Mobile */
+    --color-board-add-btn-mobile: #ff9a76;
+    --color-board-add-btn-mobile-hover: #e88565;
+
+    /* Typo */
+    --font-family: 'Roboto', sans-serif;
+
+    /* Espacements */
+}

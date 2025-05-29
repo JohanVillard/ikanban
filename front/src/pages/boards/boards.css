@@ -1,0 +1,136 @@
+@import '../../styles/variables.css';
+
+/* Container principal */
+#board-card {
+    padding: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Bouton "Créer un tableau" - Desktop */
+#create-board-btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 0.4rem;
+    background-color: var(--color-board-add-btn);
+    color: var(--color-board-add-btn-txt);
+    cursor: pointer;
+}
+
+#create-board-btn:hover {
+    background-color: var(--color-board-add-btn-hover);
+}
+
+/* Bouton mobile flottant */
+#create-board-mobile {
+    display: none;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: var(--color-board-add-btn-mobile);
+    border: none;
+    border-radius: 50%;
+    font-size: 2rem;
+    padding: 0.6rem 0.9rem;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+#create-board-mobile:hover {
+    background-color: var(--color-board-add-btn-mobile-hover);
+}
+
+/* Liste des tableaux */
+.board-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Élément de tableau */
+.board-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--color-board-item);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+.board-item:hover {
+    background-color: var(--color-board-item-hover);
+    cursor: pointer;
+}
+
+/* Colonnes dans chaque ligne */
+.board-col {
+    padding: 0 0.5rem;
+}
+
+.board-name {
+    flex: 1;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.update-board-btn {
+    flex: 0;
+    background: none;
+    border: none;
+    color: var(--color-btn-update);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.update-board-btn:hover {
+    color: var(--color-btn-update-hover);
+}
+
+.delete-board-btn {
+    flex: 0;
+    background: none;
+    border: none;
+    color: var(--color-btn-delete);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.delete-board-btn:hover {
+    color: var(--color-btn-delete-hover);
+}
+
+/* Responsive : afficher bouton mobile uniquement en petit écran */
+@media screen and (max-width: 600px) {
+    #create-board-btn {
+        display: none;
+    }
+
+    #create-board-mobile {
+        display: block;
+    }
+
+    .board-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+
+    .update-board-btn,
+    .delete-board-btn {
+        align-self: flex-end;
+    }
+}
+
+.fa-trash {
+    color: var(--color-delete-btn);
+}
