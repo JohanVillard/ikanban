@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import TaskDb from '../repositories/taskDb';
 import { Task } from '../../../types/task';
+import { log } from 'console';
 
 /**
  * Service pour la gestion des tâches.
@@ -31,13 +32,12 @@ import { Task } from '../../../types/task';
         columnId: string
     ): Promise<Task> {
         try {
-            const taskExists =
-                await this.taskDb.findByNameAndColumnIdAndBoardId(
-                    name,
-                    columnId
-                );
+            const taskExists = await this.taskDb.findByNameAndBoardId(
+                name,
+                columnId
+            );
             if (taskExists) {
-                throw new Error('Ce nom de tâche est déjà utilisé.');
+                throw new Error('Ce nom de tâche est déjà utilisé');
             }
 
             const id = uuidv4();
@@ -179,12 +179,10 @@ import { Task } from '../../../types/task';
             // Je vérifie si le nom de la tâche n'est pas pris dans le tableau
             // À la condition que le nom d'origine de la tâche soit différent du nouveau
             if (taskData.name !== taskToUpdate.name) {
-                const taskExists =
-                    await this.taskDb.findByNameAndColumnIdAndBoardId(
-                        taskToUpdate.name,
-                        taskToUpdate.column_id
-                    );
-
+                const taskExists = await this.taskDb.findByNameAndBoardId(
+                    taskData.name,
+                    taskData.columnId
+                );
                 if (taskExists) {
                     throw new Error('Ce nom de tâche est déjà utilisé');
                 }

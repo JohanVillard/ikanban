@@ -56,6 +56,8 @@ class UserService {
         confirmationPassword: string
     ): void {
         if (plainPassword !== confirmationPassword) {
+            console.log(plainPassword + ' vs ' + confirmationPassword);
+
             throw new Error('Les mots de passe ne correspondent pas');
         }
     }
