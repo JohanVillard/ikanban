@@ -35,7 +35,6 @@ import { validationResult } from 'express-validator';
         try {
             // Attrape le retour du middleware de validation
             const errors = validationResult(req);
-
             if (!errors.isEmpty()) {
                 res.status(422).json({
                     success: false,
@@ -54,13 +53,13 @@ import { validationResult } from 'express-validator';
             );
 
             res.status(201).json({
-                success: false,
+                success: true,
                 data: task,
             });
         } catch (error: any) {
             console.error(`Erreur en créant la tâche (controleur): ${error}`);
 
-            if (error.message === 'Ce nom de tâche est déjà utilisé.') {
+            if (error.message === 'Ce nom de tâche est déjà utilisé') {
                 res.status(409).json({
                     success: false,
                     error: error.message,
