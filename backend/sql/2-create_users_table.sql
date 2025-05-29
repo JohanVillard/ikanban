@@ -1,5 +1,4 @@
--- Se connecter à la base de données pour créer des tables
-
+-- Créer une table représentant un utilisateur
 CREATE TABLE IF NOT EXISTS users (
 	id UUID NOT NULL,
 	name VARCHAR(100) NOT NULL,

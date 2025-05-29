@@ -1,5 +1,4 @@
--- Créer un tableau représentant un kanban/projet
-
+-- Créer une table représentant un kanban/projet
 CREATE TABLE IF NOT EXISTS boards(
 	id UUID NOT NULL,
 	user_id UUID NOT NULL,
