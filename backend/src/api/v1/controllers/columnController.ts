@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ColumnService from '../services/columnService';
+import { validationResult } from 'express-validator';
 
 class ColumnController {
     private columnService: ColumnService;
@@ -12,20 +13,34 @@ class ColumnController {
     // lorsqu'elles sont utilisées par une bibliothèque externe
     // (comme Express ici) afin de préserver le bon contexte de `this`.
     createColumn = async (req: Request, res: Response): Promise<void> => {
+        // Vérifier s'il y a des erreurs de validation
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+            });
+            return;
+        }
+
         try {
             const { name } = req.body;
             const { boardId } = req.params;
 
             const column = await this.columnService.createColumn(name, boardId);
 
-            res.status(201).json(column);
+            res.status(201).json({ success: true, data: column });
         } catch (error: any) {
             console.error(`Erreur en créant la colonne: ${error}`);
 
-            if (error.message === 'Ce nom de colonne est déjà utilisé.') {
-                res.status(409).json({ error: error.message });
+            if (error.message === 'Ce nom de colonne est déjà utilisé') {
+                res.status(409).json({ success: false, error: error.message });
             } else {
-                res.status(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur',
+                });
             }
         }
     };
@@ -76,7 +91,7 @@ class ColumnController {
             const columns =
                 await this.columnService.getColumnsByBoardId(boardId);
 
-            res.status(200).json(columns);
+            res.status(200).json({ success: true, data: columns });
         } catch (error: any) {
             console.error(
                 `Erreur en récupérant la liste des colonnes d'un tableau: ${error}`
@@ -86,14 +101,31 @@ class ColumnController {
                 error.message ===
                 "Aucune colonne n'est enregistrée dans ce tableau."
             ) {
-                res.status(404).json({ error: error.message });
+                res.status(404).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.status(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
 
     updateColumn = async (req: Request, res: Response): Promise<void> => {
+        // Attrape le retour du middleware de validation
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+            });
+            return;
+        }
+
         try {
             const { name } = req.body;
             const { colId } = req.params;
@@ -103,21 +135,33 @@ class ColumnController {
                 colId
             );
 
-            res.status(200).json(updatedBoard);
+            res.status(200).json({
+                success: true,
+                updatedBoard,
+            });
         } catch (error: any) {
             console.error(`Erreur en modifiant la colonne: ${error}`);
             if (
                 error.message ===
                 'Impossible de modifier la colonne : le nom est déjà pris'
             ) {
-                res.status(409).json({ error: error.message });
+                res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
             } else if (
                 error.message ===
                 'Impossible de modifier la colonne : elle n’existe pas'
             ) {
-                res.status(404).json({ error: error.message });
+                res.status(404).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.status(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };

@@ -6,7 +6,7 @@ dotenv.config();
 /**
  * Middleware pour vérifier que l'utilisateur est authentifié via un token JWT.
  *
- * Ce middleware extrait le token JWT de l'en-tête `Authorization`, le vérifie et
+ * Ce middleware extrait le token JWT du cookie, le vérifie et
  * extrait l'ID de l'utilisateur. Si le token est valide, il ajoute l'ID de l'utilisateur
  * à la requête sous `req.userId`. Si le token est absent ou invalide, une réponse
  * avec un statut HTTP 401 est renvoyée.
@@ -21,7 +21,12 @@ dotenv.config();
  */
 function authMiddleware(req: Request, res: Response, next: NextFunction): void {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
+        // Je laisse passer les requêtes preflight
+        if (req.method === 'OPTIONS') {
+            return next();
+        }
+
+        const token = req.cookies.token;
         if (!token) {
             res.status(401).json({ error: 'Accès refusé. Token introuvable.' });
             return;

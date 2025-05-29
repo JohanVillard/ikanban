@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import TaskService from '../services/taskService';
+import { Task } from 'types/task';
+import { validationResult } from 'express-validator';
 
 /**
  * Contrôleur pour gérer les tâches.
@@ -31,6 +33,17 @@ import TaskService from '../services/taskService';
      */
     createTask = async (req: Request, res: Response): Promise<void> => {
         try {
+            // Attrape le retour du middleware de validation
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                res.status(422).json({
+                    success: false,
+                    errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+                });
+                return;
+            }
+
             const { colId } = req.params;
             const { name, description } = req.body;
 
@@ -40,14 +53,23 @@ import TaskService from '../services/taskService';
                 colId
             );
 
-            res.status(201).json(task);
+            res.status(201).json({
+                success: false,
+                data: task,
+            });
         } catch (error: any) {
             console.error(`Erreur en créant la tâche (controleur): ${error}`);
 
             if (error.message === 'Ce nom de tâche est déjà utilisé.') {
-                res.status(409).json({ error: error.message });
+                res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
@@ -70,16 +92,25 @@ import TaskService from '../services/taskService';
 
             const task = await this.taskService.getTaskById(taskId);
 
-            res.status(200).json(task);
+            res.status(200).json({
+                success: true,
+                data: task,
+            });
         } catch (error: any) {
             console.error(
                 `Erreur en récupérant la tâche (controleur): ${error}`
             );
 
             if (error.message === "La tâche n'a pas été trouvée.") {
-                res.status(409).json({ error: error.message });
+                res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
@@ -108,7 +139,7 @@ import TaskService from '../services/taskService';
             if (error.message === "Aucune tâche c'est enregistrée.") {
                 res.status(409).json({ error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur.' });
             }
         }
     };
@@ -134,7 +165,10 @@ import TaskService from '../services/taskService';
 
             const tasks = await this.taskService.getTasksByColumId(colId);
 
-            res.status(200).json(tasks);
+            res.status(200).json({
+                success: true,
+                data: tasks,
+            });
         } catch (error: any) {
             console.error(
                 `Erreur en récupérant la liste de toutes les tâches de la colonne (controleur): ${error}`
@@ -144,9 +178,94 @@ import TaskService from '../services/taskService';
                 error.message ===
                 "Aucune tâche n'est enregistrée dans cette colonne."
             ) {
-                res.status(409).json({ error: error.message });
+                res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
+            }
+        }
+    };
+
+    /**
+     * Met à jour complètement une tâche existante dans la base de données.
+     *
+     * Cette méthode récupère les nouvelles données de la tâche depuis le corps de la requête (`req.body`)
+     * et identifie la tâche à mettre à jour à l'aide des paramètres d'URL (`taskId`, `colId`).
+     * Elle met à jour les champs : nom, description, statut de complétion (`done`) et position.
+     *
+     * @param {Request} req - L'objet représentant la requête HTTP.
+     * Contient les paramètres `taskId` et `colId` dans `req.params`,
+     * ainsi que les nouvelles données de la tâche dans `req.body`.
+     *
+     * @param {Response} res - L'objet représentant la réponse HTTP.
+     * Retourne un objet JSON contenant la tâche mise à jour en cas de succès, ou un message d'erreur en cas d'échec.
+     *
+     * @returns {Promise<void>} - Cette fonction ne retourne rien directement, mais envoie une réponse HTTP.
+     *
+     * @throws {409 Conflict} Si une tâche avec le même nom existe déjà dans la même colonne.
+     * @throws {404 Not Found} Si la tâche à mettre à jour n'existe pas.
+     * @throws {500 Internal Server Error} En cas d'erreur serveur inattendue.
+     */
+
+    updateFullTask = async (req: Request, res: Response): Promise<void> => {
+        try {
+            // Attrape le retour du middleware de validation
+            const errors = validationResult(req);
+
+            if (!errors.isEmpty()) {
+                res.status(422).json({
+                    success: false,
+                    errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+                });
+                return;
+            }
+
+            const { name, description, done, position } = req.body;
+            const { taskId, colId } = req.params;
+
+            const taskData: Task = {
+                id: taskId,
+                name: name,
+                description: description,
+                columnId: colId,
+                done: done,
+                position: position,
+            };
+
+            const task = await this.taskService.updateFullTask(
+                taskId,
+                taskData
+            );
+
+            res.status(201).json({
+                success: true,
+                task,
+            });
+        } catch (error: any) {
+            console.error(
+                `Erreur en modifiant la tâche (controleur): ${error}`
+            );
+
+            if (error.message === 'Ce nom de tâche est déjà utilisé') {
+                res.status(409).json({ success: false, error: error.message });
+            } else if (
+                error.message ===
+                "Impossible de modifier la tâche : elle n'existe pas"
+            ) {
+                res.status(404).json({
+                    success: false,
+                    error: error.message,
+                });
+            } else {
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
@@ -162,18 +281,17 @@ import TaskService from '../services/taskService';
      *
      * @returns {Promise<void>} - Ne retourne rien, mais envoie une réponse JSON avec la tâche mise à jour.
      */
-    updateTask = async (req: Request, res: Response): Promise<void> => {
+    updatePartialTask = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { name, description } = req.body;
+            const taskData: Partial<Task> = req.body;
             const { taskId } = req.params;
 
-            const task = await this.taskService.updateTask(
-                name,
-                description,
-                taskId
+            const task = await this.taskService.updatePartialTask(
+                taskId,
+                taskData
             );
 
-            res.status(201).json(task);
+            res.status(201).json({ success: true, data: task });
         } catch (error: any) {
             console.error(
                 `Erreur en modifiant la tâche (controleur): ${error}`
@@ -183,14 +301,20 @@ import TaskService from '../services/taskService';
                 error.message ===
                 'Impossible de modifier la tâche : le nom est déjà pris'
             ) {
-                res.status(409).json({ error: error.message });
+                res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
             } else if (
                 error.message ===
                 "Impossible de modifier la tâche : elle n'existe pas"
             ) {
-                res.status(404).json({ error: error.message });
+                res.status(404).json({ success: false, error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
@@ -210,14 +334,15 @@ import TaskService from '../services/taskService';
         try {
             const { taskId } = req.params;
 
-            await this.taskService.deleteTask(taskId);
+            const isDeleted = await this.taskService.deleteTask(taskId);
 
             res.status(200).json({
+                isDeleted: isDeleted,
                 message: 'La tâche a été supprimé avec succès.',
             });
         } catch (error: any) {
             console.error(
-                `Erreur en modifiant la tâche (controleur): ${error}`
+                `Erreur en supprimant la tâche (controleur): ${error}`
             );
 
             if (
@@ -226,7 +351,7 @@ import TaskService from '../services/taskService';
             ) {
                 res.status(404).json({ error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur.' });
             }
         }
     };

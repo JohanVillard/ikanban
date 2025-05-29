@@ -22,8 +22,6 @@ async function authorizationMiddleware(
 
     const boardService = new BoardService();
     const board = await boardService.getBoardById(boardId);
-    console.log(connectedUserId + ' VS ' + board.id, board.name, board.userId);
-
     if (!board || connectedUserId !== board.userId) {
         res.status(403).json({
             message:

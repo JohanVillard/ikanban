@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
@@ -11,7 +12,9 @@ import taskRoutes from '../src/api/v1/routes/taskRoutes';
 
 const app = express();
 
-app.use(cors());
+app.use(cookieParser());
+
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use(express.json());
 

@@ -11,23 +11,24 @@ class BoardService {
 
     async createBoard(name: string, userId: string): Promise<Board> {
         try {
-            const boardExists = await this.boardDb.findByNameAndByUserId(
+            const existingBoard = await this.boardDb.findByNameAndByUserId(
                 name,
                 userId
             );
-            if (boardExists) {
-                throw new Error('Ce nom de tableau existe déjà.');
+
+            if (existingBoard) {
+                throw new Error('Ce nom de tableau existe déjà');
             }
 
             const id = uuidv4();
             const board = await this.boardDb.create(id, name, userId);
             if (!board) {
-                throw new Error('La création du tableau a échouée.');
+                throw new Error('La création du tableau a échoué');
             }
 
+            const { user_id, ...boardWithoutUserid } = board;
             return {
-                id: board.id,
-                name: board.name,
+                ...boardWithoutUserid,
                 userId: board.user_id,
             };
         } catch (error) {
@@ -46,9 +47,9 @@ class BoardService {
                 throw new Error("Le tableau n'a pas été trouvé.");
             }
 
+            const { user_id, ...boardWithoutUserid } = board;
             return {
-                id: board.id,
-                name: board.name,
+                ...boardWithoutUserid,
                 userId: board.user_id,
             };
         } catch (error) {
@@ -67,10 +68,13 @@ class BoardService {
                 throw new Error("Aucun tableau n'est enregistré.");
             }
 
-            const boards = dbBoards.map((board) => ({
-                ...board,
-                userId: board.user_id,
-            }));
+            const boards = dbBoards.map((board) => {
+                const { user_id, ...boardWithoutUserid } = board;
+                return {
+                    ...boardWithoutUserid,
+                    userId: user_id,
+                };
+            });
 
             return boards;
         } catch (error) {
@@ -91,10 +95,13 @@ class BoardService {
                 );
             }
 
-            const boards = dbBoards.map((board) => ({
-                ...board,
-                userId: board.user_id,
-            }));
+            const boards = dbBoards.map((board) => {
+                const { user_id, ...boardWithoutUserid } = board;
+                return {
+                    ...boardWithoutUserid,
+                    userId: user_id,
+                };
+            });
 
             return boards;
         } catch (error) {
@@ -110,15 +117,16 @@ class BoardService {
         try {
             const boardToUpdate = await this.boardDb.findById(id);
             if (!boardToUpdate) {
-                throw new Error(
-                    'Impossible de modifier le tableau : il n’existe pas'
-                );
+                throw new Error("Le tableau n'existe pas");
             }
 
-            if (boardToUpdate.name === name) {
-                throw new Error(
-                    'Impossible de modifier le tableau : le nom est déjà pris'
-                );
+            const foundBoard = await this.boardDb.findByNameAndByUserId(
+                name,
+                boardToUpdate.user_id
+            );
+
+            if (foundBoard || boardToUpdate.name === name) {
+                throw new Error('Le nom du tableau est déjà pris');
             }
 
             const updatedBoard = await this.boardDb.update(name, id);

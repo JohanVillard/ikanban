@@ -1,6 +1,7 @@
 import express from 'express';
 import UserController from '../controllers/userController';
-import userValidationSchema from '../../../middlewares/userValidation';
+import authMiddleware from '../../../middlewares/authMiddleware';
+import updateUserValidationSchema from '../../../middlewares/updateUserValidation';
 
 const router = express.Router();
 const userController = new UserController();
@@ -43,14 +44,14 @@ router.get('/user/list', userController.fetchAllUsers);
 
 /**
  * @swagger
- * /user/{id}:
+ * /user/{userId}:
  *   get:
  *     tags: [User]
  *     summary: Recupère un utilisateur par son ID
  *     description: Récupère l'utilisateur correspondant à son ID.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         description: L'ID de l'utilisateur à récupérer
  *         schema:
@@ -80,22 +81,15 @@ router.get('/user/list', userController.fetchAllUsers);
  *       500:
  *         description: Erreur lors de la récupération de l'utilisateur
  */
-router.get('/user/:id', userController.fetchUserById);
+router.get('/user/:userId', authMiddleware, userController.fetchUserById);
 
 /**
  * @swagger
- * /user/{id}:
- *   put:
+ * /user:
+ *   patch:
  *     tags: [User]
  *     summary: Modifie un utilisateur par son ID
  *     description: Modifie l'utilisateur correspondant à son ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: L'ID de l'utilisateur à modifier.
- *         schema:
- *           type: string
  *     requestBody:
  *       description: Les informations nécessaires pour modifier un utilisateur.
  *       content:
@@ -105,7 +99,6 @@ router.get('/user/:id', userController.fetchUserById);
  *             optional:
  *               - name
  *               - email
- *               - password
  *             properties:
  *               name:
  *                 type: string
@@ -115,10 +108,6 @@ router.get('/user/:id', userController.fetchUserById);
  *                 type: string
  *                 description: L'email de l'utilisateur.
  *                 example: 'jean.dupond@example.com'
- *               password:
- *                 type: string
- *                 description: Le mot de passe de l'utilisateur.
- *                 example: 'motdepasse123'
  *     responses:
  *       200:
  *         description: L'utilisateur a été modifié avec succès.
@@ -144,22 +133,20 @@ router.get('/user/:id', userController.fetchUserById);
  *       500:
  *         description: Erreur lors de la modification de l'utilisateur.
  */
-router.put('/user/:id', userValidationSchema, userController.updateUser);
+router.patch(
+    '/user',
+    authMiddleware,
+    updateUserValidationSchema,
+    userController.updateUser
+);
 
 /**
  * @swagger
- * /user/{id}:
+ * /user:
  *   delete:
  *     tags: [User]
- *     summary: Supprime un utilisateur par son ID
- *     description: Supprime l'utilisateur correspondant à son ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: L'ID de l'utilisateur à supprimer
- *         schema:
- *           type: string
+ *     summary: Supprime un utilisateur connecté
+ *     description: Supprime l'utilisateur correspondant à son ID contenu dans un cookie.
  *     responses:
  *       204:
  *         description: L'utilisateur a été supprimé avec succès
@@ -168,6 +155,6 @@ router.put('/user/:id', userValidationSchema, userController.updateUser);
  *       500:
  *         description: Erreur lors de la suppression de l'utilisateur
  */
-router.delete('/user/:id', userController.deleteUser);
+router.delete('/user', authMiddleware, userController.deleteUser);
 
 export default router;

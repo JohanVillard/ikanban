@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import BoardService from '../services/boardService';
+import { validationResult } from 'express-validator';
 
 class BoardController {
     private boardService: BoardService;
@@ -12,6 +13,17 @@ class BoardController {
     // lorsqu'elles sont utilisées par une bibliothèque externe
     // (comme Express ici) afin de préserver le bon contexte de `this`.
     createBoard = async (req: Request, res: Response): Promise<void> => {
+        // Vérifier s'il y a des erreurs de validation
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+            });
+            return;
+        }
+
         try {
             const { name } = req.body;
             const userId = req.userId;
@@ -19,18 +31,19 @@ class BoardController {
             if (userId) {
                 const board = await this.boardService.createBoard(name, userId);
 
-                res.status(201).json(board);
+                res.status(201).json({ success: true, data: board });
                 return;
             }
-
-            res.status(500).json({ error: "Pas d'ID dans le token." });
         } catch (error: any) {
             console.error('Erreur en créant le tableau: ', error);
 
-            if (error.message === 'Ce nom de tableau existe déjà.') {
-                res.status(409).json({ error: error.message });
+            if (error.message === 'Ce nom de tableau existe déjà') {
+                res.status(409).json({ success: false, error: error.message });
             } else {
-                res.sendStatus(500).json('Erreur serveur.');
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur indéfinie du serveur',
+                });
             }
         }
     };
@@ -48,7 +61,7 @@ class BoardController {
             if (error.message === "Le tableau n'a pas été trouvé.") {
                 res.status(404).json({ error: error.message });
             } else {
-                res.sendStatus(500).json('Erreur serveur.');
+                res.status(500).json('Erreur serveur.');
             }
         }
     };
@@ -67,7 +80,7 @@ class BoardController {
             if (error.message === "Aucun tableau n'est enregistré.") {
                 res.status(404).json({ error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur.' });
             }
         }
     };
@@ -102,12 +115,22 @@ class BoardController {
             ) {
                 res.status(404).json({ error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur.' });
             }
         }
     };
 
     updateBoard = async (req: Request, res: Response): Promise<void> => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+            });
+            return;
+        }
+
         try {
             const { name } = req.body;
             const { boardId } = req.params;
@@ -117,17 +140,19 @@ class BoardController {
                 boardId
             );
 
-            res.status(200).json(updatedBoard);
+            res.status(200).json({ success: true, data: updatedBoard });
         } catch (error: any) {
             console.error('Erreur en mettant à jour le tableau: ', error);
 
-            if (
-                error.message ===
-                'Impossible de modifier le tableau : il n’existe pas ou les données sont identiques.'
-            ) {
-                res.status(404).json({ error: error.message });
+            if (error.message === "Le tableau n'existe pas") {
+                res.status(404).json({ success: false, error: error.message });
+            } else if (error.message === 'Le nom du tableau est déjà pris') {
+                res.status(409).json({ succes: false, error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({
+                    succes: false,
+                    error: 'Erreur serveur.',
+                });
             }
         }
     };
@@ -149,7 +174,7 @@ class BoardController {
             ) {
                 res.status(404).json({ error: error.message });
             } else {
-                res.sendStatus(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur.' });
             }
         }
     };

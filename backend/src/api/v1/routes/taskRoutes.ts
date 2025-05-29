@@ -2,6 +2,7 @@ import express from 'express';
 import TaskController from '../controllers/taskController';
 import authMiddleware from '../../../middlewares/authMiddleware';
 import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
+import taskValidationSchema from '../../../middlewares/taskValidation';
 
 const router = express.Router();
 const taskController = new TaskController();
@@ -78,6 +79,7 @@ const taskController = new TaskController();
 router.post(
     '/board/:boardId/column/:colId/task',
     authMiddleware,
+    taskValidationSchema,
     taskController.createTask
 );
 
@@ -321,7 +323,85 @@ router.put(
     '/board/:boardId/column/:colId/task/:taskId',
     authMiddleware,
     authorizationMiddleware,
-    taskController.updateTask
+    taskValidationSchema,
+    taskController.updateFullTask
+);
+
+/**
+ * @swagger
+ * /board/{boardId}/column/{colId}/task/{taskId}:
+ *   patch:
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Task]
+ *     summary: Modifie une tâche par son ID
+ *     description: Modifie la tâche correspondant à son ID. Seuls les champs spécifiés sont modifiés.
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         description: L'ID du tableau propriétaire de la tâche à modifier.
+ *       - in: path
+ *         name: colId
+ *         required: true
+ *         description: L'ID de la colonne propriétaire du tableau.
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: L'ID de la tâche à modifier.
+ *     requestBody:
+ *       description: Les informations nécessaires pour modifier la tâche. Seuls les champs à modifier doivent être fournis.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Le nom de la tâche.
+ *                 example: 'Couper les pommes'
+ *               description:
+ *                 type: string
+ *                 description: La description de la tâche.
+ *                 example: "D'abord, il faut peler la pomme puis la couper en quartier"
+ *             required: []  # Aucun champ n'est requis, ils sont tous optionnels
+ *     responses:
+ *       200:
+ *         description: La tâche a été modifiée avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: L'identifiant de la tâche.
+ *                   example: '75013455-fe9a-423a-a398-88d8b46d32ad'
+ *                 columnId:
+ *                   type: string
+ *                   description: L'identifiant de la colonne propriétaire.
+ *                   example: '16cd3af1-6af6-470e-b244-89200f90e'
+ *                 name:
+ *                   type: string
+ *                   description: Le nom de la tâche.
+ *                   example: 'Couper les pommes'
+ *                 description:
+ *                   type: string
+ *                   description: La description de la tâche.
+ *                   example: "D'abord, il faut peler la pomme puis la couper en quartier"
+ *       404:
+ *         description: La tâche ou un des objets parents (tableau, colonne) n'a pas été trouvé.
+ *       500:
+ *         description: Erreur lors de la modification de la tâche.
+ *
+ */
+router.patch(
+    '/board/:boardId/column/:colId/task/:taskId',
+    authMiddleware,
+    authorizationMiddleware,
+    taskController.updatePartialTask
 );
 
 /**
@@ -340,10 +420,6 @@ router.put(
  *         description: L'ID du tableau propriétaire de la tâche à supprimer.
  *         schema:
  *           type: string
- *       - in: path
- *         name: colId
- *         required: true
- *         description: L'ID de la colonne propriétaire du tableau.
  *       - in: path
  *         name: taskId
  *         required: true

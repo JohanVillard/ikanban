@@ -16,18 +16,17 @@ class ColumnService {
                 boardId
             );
             if (columnExists) {
-                throw new Error('Ce nom de colonne est déjà utilisé.');
+                throw new Error('Ce nom de colonne est déjà utilisé');
             }
 
             const id = uuidv4();
             const column = await this.columnDb.create(id, boardId, name);
             if (!column) {
-                throw new Error('La création de la colonne a échouée.');
+                throw new Error('La création de la colonne a échouée');
             }
-
+            const { board_id, ...columnWithoutBoardid } = column;
             return {
-                id: column.id,
-                name: column.name,
+                ...columnWithoutBoardid,
                 boardId: column.board_id,
             };
         } catch (error) {
@@ -45,9 +44,9 @@ class ColumnService {
                 throw new Error("La colonne n'a pas été trouvée.");
             }
 
+            const { board_id, ...columnWithoutBoardid } = column;
             return {
-                id: column.id,
-                name: column.name,
+                ...columnWithoutBoardid,
                 boardId: column.board_id,
             };
         } catch (error) {
@@ -60,15 +59,15 @@ class ColumnService {
 
     async getAllColumns(): Promise<Column[]> {
         try {
-            const columns = await this.columnDb.findAll();
-            if (!columns) {
+            const dbColumns = await this.columnDb.findAll();
+            if (!dbColumns) {
                 throw new Error("Aucune colonne n'est enregistrée.");
             }
 
-            const cols = columns.map((col) => ({
-                ...col,
-                boardId: col.board_id,
-            }));
+            const cols = dbColumns.map((col) => {
+                const { board_id, ...columnWithoutBoardId } = col;
+                return { ...columnWithoutBoardId, boardId: col.board_id };
+            });
 
             return cols;
         } catch (error) {
@@ -81,17 +80,17 @@ class ColumnService {
 
     async getColumnsByBoardId(boardId: string): Promise<Column[]> {
         try {
-            const columns = await this.columnDb.findByBoardId(boardId);
-            if (!columns) {
+            const dbColumns = await this.columnDb.findByBoardId(boardId);
+            if (!dbColumns) {
                 throw new Error(
                     "Aucune colonne n'est enregistrée dans ce tableau."
                 );
             }
 
-            const cols = columns.map((col) => ({
-                ...col,
-                boardId: col.board_id,
-            }));
+            const cols = dbColumns.map((col) => {
+                const { board_id, ...columnWithoutBoardId } = col;
+                return { ...columnWithoutBoardId, boardId: col.board_id };
+            });
 
             return cols;
         } catch (error) {
@@ -126,6 +125,7 @@ class ColumnService {
                 id: updatedColumn.id,
                 name: updatedColumn.name,
                 boardId: updatedColumn.board_id,
+                position: updatedColumn.position,
             };
         } catch (error) {
             console.error(

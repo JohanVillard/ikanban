@@ -15,22 +15,26 @@ class UserService {
     async createUser(
         name: string,
         email: string,
-        plainPassword: string
-    ): Promise<Partial<User>> {
-        const salt = genSaltSync(10);
-        const hash = hashSync(plainPassword, salt);
+        plainPassword: string,
+        confirmationPassword: string
+    ): Promise<Omit<User, 'passwordHash'>> {
+        this.validatePasswordsMatch(plainPassword, confirmationPassword);
+
+        const hashedPassword = this.hashPassword(10, plainPassword);
 
         const id = uuidv4();
 
-        const user = await this.userDb.findByMail(email);
-        if (user) {
-            throw new Error('Impossible de créer le compte.');
-        }
-
         try {
-            const user = await this.userDb.create(id, name, email, hash);
+            await this.ensureUniqueEmail(email);
+
+            const user = await this.userDb.create(
+                id,
+                name,
+                email,
+                hashedPassword
+            );
             if (!user) {
-                throw new Error("La création de l'utilisateur a échoué.");
+                throw new Error("La création de l'utilisateur a échoué");
             }
 
             return {
@@ -47,22 +51,49 @@ class UserService {
         }
     }
 
+    validatePasswordsMatch(
+        plainPassword: string,
+        confirmationPassword: string
+    ): void {
+        if (plainPassword !== confirmationPassword) {
+            throw new Error('Les mots de passe ne correspondent pas');
+        }
+    }
+
+    hashPassword(salt: number, plainPassword: string): string {
+        const s = genSaltSync(salt);
+        return hashSync(plainPassword, s);
+    }
+
+    async ensureUniqueEmail(email: string): Promise<void> {
+        const user = await this.userDb.findByMail(email);
+        if (user) {
+            throw new Error('Impossible de créer le compte');
+        }
+    }
+
     async verifyCredentials(
         email: string,
         password: string
     ): Promise<Omit<User, 'passwordHash'>> {
         Promise<{ id: string; name: string; email: string } | null>;
         try {
+            if (email.length === 0 || password.length === 0) {
+                throw new Error('Email ou mot de passe requis');
+            }
+
             const user = await this.userDb.findByMail(email);
             if (!user) {
-                throw new Error("L'utilisateur n'existe pas.");
+                throw new Error('Les identifiants sont invalides');
             }
 
             const hash = user.password_hash;
 
             const isValid = compareSync(password, hash);
+            console.log(isValid);
+
             if (!isValid) {
-                throw new Error('Les identifiants sont invalides.');
+                throw new Error('Les identifiants sont invalides');
             }
 
             // On retire le mot de passe avant de retourner user
@@ -98,10 +129,12 @@ class UserService {
         try {
             const user = await this.userDb.findById(id);
             if (!user) {
-                throw new Error("L'utilisateur n'existe pas.");
+                throw new Error("L'utilisateur n'existe pas");
             }
 
-            return user;
+            const { password_hash, ...userWithoutPassword } = user;
+
+            return userWithoutPassword;
         } catch (error) {
             console.error(
                 "Erreur lors de la récupération de l'utilisateur: (Service)",
@@ -131,7 +164,7 @@ class UserService {
                 error
             );
             throw new Error(
-                'Impossible de récupérer la liste des utilisateurs.'
+                'Impossible de récupérer la liste des utilisateurs'
             );
         }
     }
@@ -144,13 +177,11 @@ class UserService {
         try {
             const userToUpdate = await this.userDb.findById(id);
             if (!userToUpdate) {
-                throw new Error(
-                    "Impossible de modifier l'utilisateur: il n'existe pas"
-                );
+                throw new Error('Utilisateur non trouvé');
             }
-            if (userToUpdate.name === name && userToUpdate.email) {
+            if (userToUpdate.name === name && userToUpdate.email === email) {
                 throw new Error(
-                    "Impossible de modifier l'utilisateur: le nom et l'email sont identiques"
+                    'Aucune modification détectée, données identiques'
                 );
             }
 
@@ -167,7 +198,7 @@ class UserService {
                 "Erreur lors de la mise à jour de l'utilisateur: (Service)",
                 error
             );
-            throw new Error("Impossible de mettre à jour l'utilisateur.");
+            throw error;
         }
     }
 
@@ -175,7 +206,7 @@ class UserService {
         try {
             const isUserDeleted = await this.userDb.delete(id);
             if (!isUserDeleted) {
-                throw new Error("L'utilisateur n'existe pas.");
+                throw new Error('Utilisateur introuvable');
             }
 
             return isUserDeleted;
@@ -184,7 +215,7 @@ class UserService {
                 "Erreur lors de la suppression de l'utilisateur: (Service)",
                 error
             );
-            throw new Error("Impossible de supprimer l'utilisateur.");
+            throw error;
         }
     }
 }

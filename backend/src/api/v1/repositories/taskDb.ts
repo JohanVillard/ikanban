@@ -1,4 +1,4 @@
-import { TaskDbRecord } from '../../../types/task';
+import { Task, TaskDbRecord } from '../../../types/task';
 import pool from '../../../config/connectDB';
 
 /**
@@ -7,16 +7,17 @@ import pool from '../../../config/connectDB';
  */
 class TaskDb {
     /**
-     * Crée une nouvelle tâche dans la base de données.
-     * Retourne la tâche créée.
+     * Crée une nouvelle tâche dans la base de données, associée à une colonne spécifique.
+     * La position de la tâche est automatiquement déterminée comme la suivante dans l'ordre.
      *
-     * @param {string} id - L'ID de la tâche à créer.
-     * @param {string} columnId - L'ID de la colonne à laquelle la tâche appartient.
+     * @param {string} id - L'identifiant unique de la tâche (UUID).
+     * @param {string} columnId - L'identifiant de la colonne à laquelle la tâche appartient (UUID).
      * @param {string} name - Le nom de la tâche.
-     * @param {string} description - La description de la tâche.
-     * @returns {Promise<TaskDb>} La tâche créée.
-     * @throws {Error} Si une erreur survient lors de la création de la tâche.
+     * @param {string} description - La description de la tâche. Peut être une chaîne vide ou null.
+     * @returns {Promise<TaskDbRecord>} Un objet représentant la tâche nouvellement créée.
+     * @throws {Error} En cas d'erreur lors de l'insertion dans la base de données.
      */
+
     async create(
         id: string,
         columnId: string,
@@ -24,9 +25,15 @@ class TaskDb {
         description: string
     ): Promise<TaskDbRecord> {
         try {
+            const positionResult = await pool.query(
+                'SELECT COALESCE(MAX(position), -1) + 1 AS next_position FROM tasks WHERE column_id = $1',
+                [columnId]
+            );
+
+            const position = positionResult.rows[0].next_position;
             const query =
-                'INSERT INTO tasks (id, column_id, name, description) VALUES ($1, $2, $3, $4) RETURNING *';
-            const values = [id, columnId, name, description];
+                'INSERT INTO tasks (id, column_id, name, description, position) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            const values = [id, columnId, name, description, position];
 
             const res = await pool.query(query, values);
 
@@ -171,22 +178,23 @@ class TaskDb {
      * Modifie une tâche existante.
      * Retourne la tâche mise à jour.
      *
-     * @param {string} name - Le nouveau nom de la tâche.
-     * @param {string} description - La nouvelle description de la tâche.
      * @param {string} id - L'ID de la tâche à modifier.
+     * @param {Partial<Task>} taskData - Les nouvelles données de la tâche à mettre à jour.
      * @returns {Promise<Task>} La tâche modifiée.
      * @throws {Error} Si la tâche n'existe pas ou si la modification échoue.
      */
-    async update(
-        name: string,
-        description: string,
-        id: string
-    ): Promise<TaskDbRecord> {
+    async update(id: string, taskData: Partial<Task>): Promise<TaskDbRecord> {
         try {
             const query =
-                'UPDATE tasks SET name = $1, description = $2 WHERE id = $3 RETURNING *';
-            const values = [name, description, id];
-
+                'UPDATE tasks SET name = $1, description = $2, column_id= $3, position=$4, done=$5 WHERE id = $6 RETURNING *';
+            const values = [
+                taskData.name,
+                taskData.description,
+                taskData.columnId,
+                taskData.position,
+                taskData.done,
+                id,
+            ];
             const res = await pool.query(query, values);
 
             return res.rows[0];

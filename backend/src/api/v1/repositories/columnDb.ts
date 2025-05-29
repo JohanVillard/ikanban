@@ -8,9 +8,17 @@ class ColumnDb {
         name: string
     ): Promise<ColumnDbRecord> {
         try {
+            // Récupérer la plus grande position actuelle dans le tableau
+            // Si aucune colonne n'est créée, alors la position de la première colonne sera 0
+            const positionResult = await pool.query(
+                'SELECT COALESCE(MAX(position), -1) + 1 AS next_position FROM columns WHERE board_id = $1',
+                [boardId]
+            );
+
+            const position = positionResult.rows[0].next_position;
             const query =
-                'INSERT INTO columns (id, board_id, name) VALUES ($1, $2, $3) RETURNING *';
-            const values = [id, boardId, name];
+                'INSERT INTO columns (id, board_id, name, position) VALUES ($1, $2, $3, $4) RETURNING *';
+            const values = [id, boardId, name, position];
 
             const res = await pool.query(query, values);
 
@@ -62,7 +70,9 @@ class ColumnDb {
 
     async findByBoardId(boardId: string): Promise<ColumnDbRecord[] | null> {
         try {
-            const query = 'SELECT * FROM columns WHERE board_id = $1';
+            // Trier par ordre croisssant la position des colonnes
+            const query =
+                'SELECT * FROM columns WHERE board_id = $1 ORDER BY position ASC';
             const value = [boardId];
 
             const res = await pool.query(query, value);

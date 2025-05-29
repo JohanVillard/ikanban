@@ -17,18 +17,21 @@ class UserController {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            // Si des erreurs sont présentes, retourner les erreurs au client
-            res.status(400).json({ errors: errors.array() });
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // Renvoie un objet au lieu d’un tableau
+            });
             return;
         }
 
-        const { name, email, password } = req.body;
+        const { name, email, password, confirmationPassword } = req.body;
 
         try {
             const user = await this.userService.createUser(
                 name,
                 email,
-                password
+                password,
+                confirmationPassword
             );
 
             if (!user) {
@@ -36,14 +39,25 @@ class UserController {
                 return;
             }
 
-            res.status(201).json(user);
+            res.status(201).json({
+                success: true,
+                message: 'Votre compte a été créé',
+                data: user,
+            });
         } catch (error: any) {
             console.error("Erreur en créant l'utilisateur: ", error);
 
-            if (error.message === 'Impossible de créer le compte.') {
-                res.status(409).json({ error: error.message });
+            if (error.message === 'Impossible de créer le compte') {
+                res.status(409).json({ success: false, error: error.message });
+            } else if (
+                error.message === 'Les mots de passe ne correspondent pas'
+            ) {
+                res.status(400).json({ success: false, error: error.message });
             } else {
-                res.status(500).json({ error: 'Erreur serveur inconnue.' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur inconnue',
+                });
             }
         }
     };
@@ -53,6 +67,7 @@ class UserController {
 
         try {
             const user = await this.userService.getUserById(userId);
+
             if (!user) {
                 res.sendStatus(404);
                 return;
@@ -89,10 +104,15 @@ class UserController {
 
         if (!errors.isEmpty()) {
             // Si des erreurs sont présentes, retourner les erreurs au client
-            res.status(400).json({ errors: errors.array() });
+            res.status(400).json({ success: false, errors: errors.mapped() });
             return;
         }
-        const { id } = req.params;
+        const id = req.userId;
+        if (!id) {
+            res.status(401).json({ success: false, error: 'Token manquant' });
+            return;
+        }
+
         const { name, email } = req.body;
 
         try {
@@ -101,38 +121,71 @@ class UserController {
                 email,
                 id
             );
-            if (!updatedUser) {
-                res.sendStatus(404);
-                return;
-            }
 
-            res.status(200).json(updatedUser);
-        } catch (error) {
+            res.status(200).json({
+                success: true,
+                data: updatedUser,
+                message: 'Vos données ont été mise à jour',
+            });
+        } catch (error: any) {
             console.error("Erreur en mettant à jour l'utilisateur: ", error);
-            res.sendStatus(500);
+
+            if (
+                error.message ===
+                'Aucune modification détectée, données identiques'
+            ) {
+                res.status(200).json({ success: true, message: error.message });
+            } else if (error.message === 'Utilisateur non trouvé') {
+                res.status(404).json({ success: false, error: error.message });
+            } else {
+                res.status(500).json({ success: false, error: error.message });
+            }
         }
     };
 
     deleteUser = async (req: Request, res: Response): Promise<void> => {
-        const { id } = req.params;
+        const id = req.userId;
+        if (!id) {
+            res.status(401).json({ message: 'Token manquant' });
+            return;
+        }
 
         try {
-            const isDeleted = await this.userService.deleteUser(id);
-            if (!isDeleted) {
-                res.sendStatus(404);
-                return;
-            }
+            await this.userService.deleteUser(id);
 
             res.status(200).json({
-                message: "L'utilisateur a été supprimé avec succés.",
+                success: true,
+                message: "L'utilisateur a été supprimé avec succés",
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Erreur en mettant à jour l'utilisateur: ", error);
-            res.sendStatus(500);
+
+            if (error.message === 'Utilisateur introuvable') {
+                res.status(403).json({
+                    success: false,
+                    error: 'Utilisateur introuvable',
+                });
+            } else {
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur',
+                });
+            }
         }
     };
 
     loginUser = async (req: Request, res: Response): Promise<void> => {
+        // Vérifier s'il y a des erreurs de validation
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                success: false,
+                errors: errors.mapped(), // ← renvoie un objet au lieu d’un tableau
+            });
+            return;
+        }
+
         const { email, password } = req.body;
 
         try {
@@ -142,20 +195,71 @@ class UserController {
             );
 
             const token = this.userService.generateJWT(user.id);
+            res.cookie('token', token, { httpOnly: true, sameSite: 'lax' });
 
             res.status(200).json({
-                sucess: true,
-                data: token,
+                success: true,
                 message: 'Vous êtes connecté.',
             });
         } catch (error: any) {
             console.error(`Erreur en connectant l'utilisateur: ${error}`);
 
-            if (error.message === '') {
-                res.status(401).json({ error: error.message });
+            if (error.message === 'Les identifiants sont invalides') {
+                res.status(401).json({
+                    success: false,
+                    error: error.message,
+                });
+            } else if (error.message === 'Email ou mot de passe requis') {
+                res.status(400).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
-                res.status(500).json({ error: 'Erreur serveur' });
+                res.status(500).json({
+                    success: false,
+                    error: 'Erreur serveur',
+                });
             }
+        }
+    };
+
+    logoutUser = async (req: Request, res: Response): Promise<void> => {
+        try {
+            res.clearCookie('token', {
+                httpOnly: true,
+                sameSite: 'lax',
+                path: '/', // Supprimer le cookie peu importe la page où on se trouve
+            });
+
+            res.status(200).json({
+                success: true,
+                message: 'Déconnecté avec succès',
+            });
+        } catch (error) {
+            console.error(`Problème lors de la déconnexion ${error}`);
+            res.status(500).json({ success: false, error: 'Erreur serveur' });
+        }
+    };
+
+    userProfile = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const id = req.userId;
+            if (!id) {
+                res.status(401).json({ message: 'Token manquant' });
+                return;
+            }
+
+            const user = await this.userService.getUserById(id);
+            if (!user) {
+                res.status(404).json({
+                    success: false,
+                    error: "L'utilisateur n'a pas été trouvé",
+                });
+            }
+
+            res.json({ success: true, data: user });
+        } catch (error) {
+            res.status(500).json({ success: false, error: error });
         }
     };
 }

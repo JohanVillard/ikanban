@@ -2,6 +2,7 @@ import express from 'express';
 import ColumnController from '../controllers/columnController';
 import authMiddleware from '../../../middlewares/authMiddleware';
 import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
+import columnValidationSchema from '../../../middlewares/columnValidation';
 
 const router = express.Router();
 const columnController = new ColumnController();
@@ -48,13 +49,17 @@ const columnController = new ColumnController();
  *                   description: L'identifiant de la colonne.
  *                   example: '75013455-fe9a-423a-a398-88d8b46d32ad'
  *                 boardId:
- *                     type: string
- *                     description: L'identifiant du tableau propriétaire de la colonne.
- *                     example: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
+ *                   type: string
+ *                   description: L'identifiant du tableau propriétaire de la colonne.
+ *                   example: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                 name:
  *                   type: string
  *                   description: Le nom de la colonne.
  *                   example: 'En cours'
+ *                 position:
+ *                   type: number
+ *                   description: La position de la colonne.
+ *                   example: 2
  *       400:
  *         description: Erreur de validation (Champ manquant).
  *       500:
@@ -63,6 +68,7 @@ const columnController = new ColumnController();
 router.post(
     '/board/:boardId/column',
     authMiddleware,
+    columnValidationSchema,
     columnController.createColumn
 );
 
@@ -95,16 +101,23 @@ router.post(
  *                     type: string
  *                     description: Le nom de la colonne.
  *                     example: 'En cours'
+ *                   position:
+ *                     type: number
+ *                     description: La position de la colonne.
+ *                     example: 1
  *             example:
  *               - id: '75013455-fe9a-423a-a398-88d8b46d32ad'
  *                 board_id: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                 name: 'En cours'
+ *                 position: 1
  *               - id: '11223344-5678-9101-abc2-3d4e5f6g7h8i'
  *                 board_id: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                 name: 'À faire'
+ *                 position: 2
  *               - id: '98765432-1a2b-3c4d-5e6f-7890g1h2i3j4'
  *                 board_id: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                 name: 'Terminé'
+ *                 position: 3
  *       404:
  *         description: La liste des colonnes n'a pas été trouvée.
  *       500:
@@ -123,7 +136,7 @@ router.get('/column/list', columnController.fetchAllColumns);
  *     description: Récupère la colonne correspondante à son ID.
  *     parameters:
  *       - in: path
- *         name: Id
+ *         name: boardId
  *         required: true
  *         description: L'ID du tableau propriétaire de la colonne à récupérer.
  *         schema:
@@ -154,6 +167,10 @@ router.get('/column/list', columnController.fetchAllColumns);
  *                   type: string
  *                   description: Le nom de la colonne.
  *                   example: 'En cours'
+ *                 position:
+ *                   type: number
+ *                   description: La position de la colonne.
+ *                   example: 1
  *       404:
  *         description: La colonne n'a pas été trouvée.
  *       500:
@@ -204,16 +221,23 @@ router.get(
  *                     type: string
  *                     description: Le nom de la colonne.
  *                     example: 'En cours'
+ *                   position:
+ *                     type: number
+ *                     description: La position de la colonne.
+ *                     example: 1
  *                 example:
  *                   - id: '75013455-fe9a-423a-a398-88d8b46d32ad'
  *                     boardId: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                     name: 'En cours'
+ *                     position: 1
  *                   - id: '11223344-5678-9101-abc2-3d4e5f6g7h8i'
  *                     boardId: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                     name: 'À faire'
+ *                     position: 2
  *                   - id: '98765432-1a2b-3c4d-5e6f-7890g1h2i3j4'
  *                     boardId: '1417f7d7-11b6-4cea-be1d-2605656b9f81'
  *                     name: 'Terminé'
+ *                     position: 3
  *       404:
  *         description: La liste des colonnes n'a pas été trouvée.
  *       500:
@@ -280,6 +304,10 @@ router.get(
  *                   type: string
  *                   description: Le nom de la colonne.
  *                   example: 'En cours'
+ *                 position:
+ *                   type: number
+ *                   description: La position de la colonne.
+ *                   example: 1
  *       404:
  *         description: La colonne n'a pas été trouvée.
  *       500:
@@ -290,6 +318,7 @@ router.put(
     '/board/:boardId/column/:colId',
     authMiddleware,
     authorizationMiddleware,
+    columnValidationSchema,
     columnController.updateColumn
 );
 

@@ -1,6 +1,6 @@
-import { Task } from '../../../types/task';
-import TaskDb from '../repositories/taskDb';
 import { v4 as uuidv4 } from 'uuid';
+import TaskDb from '../repositories/taskDb';
+import { Task } from '../../../types/task';
 
 /**
  * Service pour la gestion des tâches.
@@ -56,6 +56,8 @@ import { v4 as uuidv4 } from 'uuid';
                 name: task.name,
                 description: task.description,
                 columnId: task.column_id,
+                done: task.done,
+                position: task.position,
             };
         } catch (error) {
             console.error(
@@ -85,6 +87,8 @@ import { v4 as uuidv4 } from 'uuid';
                 name: task.name,
                 description: task.description,
                 columnId: task.column_id,
+                done: task.done,
+                position: task.position,
             };
         } catch (error) {
             console.error(
@@ -158,16 +162,71 @@ import { v4 as uuidv4 } from 'uuid';
      * Si la tâche à mettre à jour n'existe pas, une erreur est lancée.
      * En cas de succès, la tâche mise à jour est retournée.
      *
-     * @param {string} name - Le nouveau nom de la tâche.
-     * @param {string} description - La nouvelle description de la tâche.
-     * @param {string} id - L'ID de la tâche à mettre à jour.
+     * @param {string} id - L'ID de la tâche à modifier.
+     * @param {Task} taskData - Les nouvelles données de la tâche à mettre à jour.
      * @returns {Promise<Task>} La tâche mise à jour.
      * @throws {Error} Si la tâche n'existe pas ou si la mise à jour échoue.
      */
-    async updateTask(
-        name: string,
-        description: string,
-        id: string
+    async updateFullTask(id: string, taskData: Task): Promise<Task> {
+        try {
+            const taskToUpdate = await this.taskDb.findById(id);
+            if (!taskToUpdate) {
+                throw new Error(
+                    "Impossible de modifier la tâche : elle n'existe pas"
+                );
+            }
+
+            // Je vérifie si le nom de la tâche n'est pas pris dans le tableau
+            // À la condition que le nom d'origine de la tâche soit différent du nouveau
+            if (taskData.name !== taskToUpdate.name) {
+                const taskExists =
+                    await this.taskDb.findByNameAndColumnIdAndBoardId(
+                        taskToUpdate.name,
+                        taskToUpdate.column_id
+                    );
+
+                if (taskExists) {
+                    throw new Error('Ce nom de tâche est déjà utilisé');
+                }
+            }
+
+            Object.entries(taskData).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    (taskToUpdate as Record<string, unknown>)[key] = value;
+                }
+            });
+
+            const updatedTask = await this.taskDb.update(id, taskToUpdate);
+
+            return {
+                id: updatedTask.id,
+                name: updatedTask.name,
+                description: updatedTask.description,
+                columnId: updatedTask.column_id,
+                done: updatedTask.done,
+                position: updatedTask.position,
+            };
+        } catch (error) {
+            console.error(
+                `Erreur lors de la mise à jour de la tâche (Service): ${error}`
+            );
+            throw error;
+        }
+    }
+
+    /**
+     * Met à jour une tâche en fonction de son ID.
+     * Si la tâche à mettre à jour n'existe pas, une erreur est lancée.
+     * En cas de succès, la tâche mise à jour est retournée.
+     *
+     * @param {string} id - L'ID de la tâche à modifier.
+     * @param {Partial<Task>} taskData - Les nouvelles données de la tâche à mettre à jour.
+     * @returns {Promise<Task>} La tâche mise à jour.
+     * @throws {Error} Si la tâche n'existe pas ou si la mise à jour échoue.
+     */
+    async updatePartialTask(
+        id: string,
+        taskData: Partial<Task>
     ): Promise<Task> {
         try {
             const taskToUpdate = await this.taskDb.findById(id);
@@ -177,13 +236,26 @@ import { v4 as uuidv4 } from 'uuid';
                 );
             }
 
-            const updatedtask = await this.taskDb.update(name, description, id);
+            // J'utilise ?? car il accepte les valeurs falsy.
+            // Contrairement à ||, qui ne prend pas la position 0
+            // car il la considère falsy (non valide).
+            const fullTask = {
+                name: taskData.name ?? taskToUpdate.name,
+                description: taskData.description ?? taskToUpdate.description,
+                columnId: taskData.columnId ?? taskToUpdate.column_id,
+                done: taskData.done ?? taskToUpdate.done,
+                position: taskData.position ?? taskToUpdate.position,
+            };
+
+            const updatedtask = await this.taskDb.update(id, fullTask);
 
             return {
                 id: updatedtask.id,
                 name: updatedtask.name,
                 description: updatedtask.description,
                 columnId: updatedtask.column_id,
+                done: updatedtask.done,
+                position: updatedtask.position,
             };
         } catch (error) {
             console.error(

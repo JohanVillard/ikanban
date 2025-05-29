@@ -3,6 +3,8 @@ export type TaskDbRecord = {
     column_id: string;
     name: string;
     description: string;
+    done: boolean;
+    position: number;
 };
 
 export type Task = {
@@ -10,4 +12,6 @@ export type Task = {
     columnId: string;
     name: string;
     description: string;
+    done: boolean;
+    position: number;
 };

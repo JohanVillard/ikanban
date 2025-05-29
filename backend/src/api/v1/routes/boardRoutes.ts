@@ -2,6 +2,7 @@ import express from 'express';
 import BoardController from '../controllers/boardController';
 import authMiddleware from '../../../middlewares/authMiddleware';
 import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
+import boardValidationSchema from '../../../middlewares/boardValidation';
 
 const router = express.Router();
 const boardController = new BoardController();
@@ -53,7 +54,12 @@ const boardController = new BoardController();
  *       500:
  *         description: Erreur serveur lors de la création de l'utilisateur
  */
-router.post('/board', authMiddleware, boardController.createBoard);
+router.post(
+    '/board',
+    authMiddleware,
+    boardValidationSchema,
+    boardController.createBoard
+);
 
 /**
  * @swagger
@@ -141,7 +147,7 @@ router.get(
 
 /**
  * @swagger
- * /board:
+ * /boards:
  *   get:
  *     security:
  *       - bearerAuth: []
@@ -175,7 +181,7 @@ router.get(
  *       500:
  *         description: Erreur lors de la récupération de la liste des tableaux.
  */
-router.get('/board', authMiddleware, boardController.fetchBoardsByUserId);
+router.get('/boards', authMiddleware, boardController.fetchBoardsByUserId);
 
 /**
  * @swagger
@@ -233,6 +239,7 @@ router.put(
     '/board/:boardId',
     authMiddleware,
     authorizationMiddleware,
+    boardValidationSchema,
     boardController.updateBoard
 );
 

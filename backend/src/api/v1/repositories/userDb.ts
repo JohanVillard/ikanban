@@ -50,7 +50,7 @@ class UserDb {
             const value = [id];
 
             const res = await pool.query(query, value);
-            if (res.rows.length > 0) {
+            if (res.rows.length === 0) {
                 return null;
             }
 

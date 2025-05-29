@@ -64,7 +64,7 @@ class BoardDb {
 
     async findByUserId(userId: string): Promise<BoardDbRecord[] | null> {
         try {
-            const query = 'SELECT * from boards WHERE user_id = $1';
+            const query = 'SELECT * FROM boards WHERE user_id = $1';
             const value = [userId];
 
             const res = await pool.query(query, value);
@@ -89,7 +89,7 @@ class BoardDb {
     ): Promise<BoardDbRecord | null> {
         try {
             const query =
-                'SELECT * FROM boards WHERE name = $1 AND user_id =$2';
+                'SELECT * FROM boards WHERE name = $1 AND user_id = $2';
             const value = [name, userId];
 
             const res = await pool.query(query, value);
