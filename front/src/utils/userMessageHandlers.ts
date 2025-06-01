@@ -74,7 +74,6 @@ function handleBackValidationError(result: ValidationError): void {
 
 function handleAPIError(result: ApiFailure): void {
     const errorContainer = document.querySelector('#form-error');
-    console.log(errorContainer);
     if (errorContainer) {
         const message = result.error;
 

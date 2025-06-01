@@ -24,8 +24,6 @@ function handleSubmitFormData(formUserData: HTMLFormElement): void {
         const jsObjectData = Object.fromEntries(formData.entries());
 
         const isDataValid = handleFrontValidationError(jsObjectData);
-        console.log(isDataValid);
-
         if (isDataValid) {
             // On ne peux pas passer directement une instance de FormData dans fetch.
             // Pour envoyer notre requête, nous devons la convertir en JSON.
