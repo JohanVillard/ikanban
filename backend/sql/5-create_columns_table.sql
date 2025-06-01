@@ -1,5 +1,4 @@
 -- Créer une colonne représentant l'étape du flux de travail
-
 CREATE TABLE IF NOT EXISTS columns (
 	id UUID NOT NULL,
 	board_id UUID NOT NULL,
