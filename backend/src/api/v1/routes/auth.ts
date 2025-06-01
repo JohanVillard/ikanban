@@ -3,6 +3,7 @@ import UserController from '../controllers/userController';
 import authValidationSchema from '../../../middlewares/authValidation';
 import registerValidationSchema from '../../../middlewares/registerValidation';
 import authMiddleware from '../../../middlewares/authMiddleware';
+import loginLimiter from '../../../middlewares/loginLimiter';
 
 const router = express.Router();
 const userController = new UserController();
@@ -110,7 +111,12 @@ router.post('/register', registerValidationSchema, userController.registerUser);
  *       500:
  *         description: Erreur serveur lors de l'identification de l'utilisateur
  */
-router.post('/login', authValidationSchema, userController.loginUser);
+router.post(
+    '/login',
+    authValidationSchema,
+    loginLimiter,
+    userController.loginUser
+);
 
 /**
  * @swagger
