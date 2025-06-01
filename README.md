@@ -1,124 +1,135 @@
 # iKanban
-
 iKanban est une application web Kanban simple permettant de gérer des tâches et des projets. Elle est construite avec Node.js, Express, et PostgreSQL pour le backend, tandis que le front-end utilise TypeScript pour une approche légère sans framework.
 
 ## Table des matières
-
 1. [Introduction](#introduction)
 2. [Stack technique](#stack-technique)
 3. [Fonctionnalités](#fonctionnalités)
 4. [Installation et Configuration](#installation-et-configuration)
 5. [Dépendances](#dépendances)
-6. [Utilisation de Swagger UI pour la documentation](#utilisation-de-swagger-ui-pour-la-documentation)
-7. [Démarrer avec Docker](#démarrer-avec-docker)
-8. [Structure du projet](#structure-du-projet)
-
+6. [Structure du projet](#structure-du-projet)
+7. [License](#license)
 ---
-
-## Introduction
-
+## 1. Introduction
 iKanban est une application de gestion de projet basée sur le concept de **Kanban**, qui permet de visualiser et de gérer les tâches d'un projet. L'application propose des fonctionnalités simples mais puissantes, telles que la création de tâches, la gestion de colonnes, et l'attribution des tâches aux utilisateurs.
-
 ---
-
-## 🛠️ Stack technique
-
+## 2. Stack technique
 - **Backend** : `Node.js`, `Express`, `PostgreSQL`
 - **Frontend** : `TypeScript`
 - **Gestion de version** : `Git`, `GitHub`
 - **Docker** : Utilisé pour la gestion des conteneurs
 - **Swagger UI** : Pour la documentation API interactive
-
 ---
-
-## Fonctionnalités
-
+## 3. Fonctionnalités
 - **Gestion des tâches** : Créer, modifier, déplacer et supprimer des tâches.
 - **Gestion des colonnes** : Créer, modifier et supprimer des colonnes, ainsi qu'attribuer des tâches à celles-ci.
 - **Gestion des projets Kanban** : Créer, modifier et supprimer des projets Kanban, avec des colonnes associées.
 - **Gestion des utilisateurs** : Inscription, connexion, suppression de comptes, et attribution des projets aux utilisateurs.
-
 ---
-
-## ⚙️ Installation et Configuration
-
+## 4. Installation et Configuration
 ### Prérequis
-
 - Node.js >= 22.14
 - PostgreSQL
 - `npm` ou `pnpm`/`yarn`
 - Docker
-
+- docker-compose
 ### Clonage du dépôt
-
 ```bash
 git clone git@github.com:JohanVillard/ikanban.git
 cd ikanban
 ```
-
-### Création du fichier .env à la racine du projet
-
+### Configuration des variables d'environnements
+Avec votre éditeur préféré, créez et configurez les fichiers `.env` suivants en remplaçant les valeurs par celles adaptées à votre environnement :
+#### Front
 ```bash
+cd front
 touch .env
 ```
-
-Avec votre éditeur de texte préféré, configurer les variables suivantes :
-
+Dans le fichier `.env`, ajoutez :
 ```
-# exemple
+# Variables d'environnement pour le frontend
+VITE_BASE_URL=http://monapp.mondomaine.com
+VITE_BASE_API_URL=https://api.mondomaine.com/api
+VITE_API_VERSION=/v1
+```
+#### Backend
+```bash
+cd backend
+touch .env
+```
+```
+# Variables d'environnement pour le backend
 DB_HOST=db
-DB_PORT=5432 // Port par défaut de Postgres
+DB_PORT=5432 # Port par défaut de Postgres
 DB_USER=db_user
 DB_PASSWORD=db_password
 DB_NAME=user_db
 NODE_ENV=development
-PORT=3000 // Port du serveur web
+PORT=3000 # Port du serveur web
+JWT_SECRET=MY_SECRET_KEY
 ```
-
-### Installation de dépendances
-
-#### Backend
-
+### Démarrer avec Docker
+#### a. Construire l'image
+Pour construire les images Docker à partir du `Dockerfile` et des services définis dans le fichier `docker-compose.yml`, exécutez la commande suivante :
 ```bash
-cd backend
-npm install
+docker compose build
 ```
-
+#### b. Démarrer les conteneurs
+Une fois l'image construite, vous pouvez démarrer les conteneurs en mode détacher avec la commande suivante :
+```bash
+docker compose up -d
+```
+#### c. Accéder à l'application
+- Application front : `https://monapp.mondomaine.com`
+- API et interface Swagger : `https://api.mondomaine.com/api/docs (ajuster selon ta configuration)`
+#### d. Arreter l'application
+Vous pouvez arréter l'application avec la commande suivante :
+```bash
+docker compose down -v
+```
 ---
-
-#### Frontend
-
----
-
-## Liste des dépendances
-
-### Backend
+## 5. Dépendances
+### Frontend
 
 #### 📦 Dépendances de production
 
-- **bcrypt-ts** : Alternative TypeScript native à bcrypt, souvent utilisée quand bcrypt classique pose problème avec des bindings natifs.
+- **@fortawesome/fontawesome-free** :  
+  Bibliothèque d’icônes très utilisée pour intégrer des icônes vectorielles et personnalisables dans l’interface utilisateur.
 
-- **cors** : Middleware pour gérer les permissions de Cross-Origin Resource Sharing.
-
-- **dotenv** : Charge les variables d’environnement depuis un fichier .env.
-
-- **express** : Framework minimaliste pour construire des applications web avec Node.js.
-
-- **express-validator** : Middleware pour valider et assainir les requêtes HTTP dans Express.
-
-- **jsonwebtoken** : Gère la création et la vérification de JSON Web Tokens (JWT) pour l’authentification.
-
-- **morgan** : Middleware de logging HTTP.
-
-- **pg** : Client PostgreSQL pour Node.js.
+---
 
 #### 📦 Dépendances de développement
 
+- **jsdom** :  
+  Implémentation en JavaScript d’un DOM (Document Object Model) pour simuler un navigateur dans les tests Node.js. Utilisé avec **vitest**.
+
+- **typescript** (~5.7.2) :  
+  Superset de JavaScript qui ajoute le typage statique. Utilisé pour écrire un code frontend plus robuste et maintenable.
+
+- **vite** :  
+  Bundler et serveur de développement pour projets front-end. Il prend en charge le hot reload, la compilation rapide et la gestion des modules.
+
+- **vitest** :  
+  Framework de test rapide et moderne intégré à Vite pour tester le code TypeScript/JavaScript frontend.
+---
+### Backend
+#### 📦 Dépendances de production
+- **bcrypt-ts** : Implémentation TypeScript pure de `bcrypt`, utile pour le hachage de mots de passe sans dépendances natives. 
+- **cookie-parser** : Parse les cookies attachés à la requête `req.cookies`.                                                       
+- **cors** : Middleware pour activer le Cross-Origin Resource Sharing.                                                    
+- **dotenv** : Charge les variables d’environnement depuis un fichier `.env`.                                               
+- **express** : Framework web minimaliste pour Node.js.                                                                      
+- **express-rate-limit** : Limiteur de requêtes pour éviter les abus (anti-DDOS, brute force).                                          
+- **express-slow-down** : Introduit un délai entre les requêtes successives pour ralentir les abus.                                    
+- **express-validator** : Middleware pour valider et assainir les entrées des requêtes HTTP.                                           
+- **helmet** : Définit des en-têtes HTTP de sécurité pour protéger l’application.                                           
+- **jsonwebtoken** : Création et vérification de JSON Web Tokens pour l’authentification.                                        
+- **morgan** : Middleware de logging HTTP (logs de requêtes entrantes).                                                     
+- **pg** : Client PostgreSQL pour Node.js.                                                                              
+
+#### 📦 Dépendances de développement
 Voici une brève description des principales bibliothèques utilisées dans ce projet :
-
 ##### 🔧 Types (typages TypeScript)
-
-- **@types/bcrypt** : Fournit les définitions de types pour la bibliothèque `bcrypt`.
 - **@types/chai** : Typages pour la bibliothèque d'assertions `chai`.
 - **@types/cors** : Types pour le middleware `cors` (Cross-Origin Resource Sharing).
 - **@types/dotenv** : Types pour la gestion de fichiers `.env` avec `dotenv`.
@@ -131,23 +142,18 @@ Voici une brève description des principales bibliothèques utilisées dans ce p
 - **@types/swagger-jsdoc** : Typages pour `swagger-jsdoc`, utilisé pour la génération de documentation Swagger.
 - **@types/swagger-ui-express** : Types pour `swagger-ui-express`, qui sert l'UI Swagger.
 - **@types/uuid** : Types pour la génération d’identifiants uniques avec `uuid`.
-
 ##### 🧪 Tests
-
 - **chai** : Librairie d'assertions BDD/TDD.
+- **chai-as-promised** : Ajoute le support des promesses à chai.
 - **mocha** : Framework de tests.
 - **sinon** : Librairie de test pour les espions (spies), les mocks et les stubs.
 - **ts-mocha** : Permet d'exécuter Mocha avec TypeScript sans transpilation préalable.
-
 ##### 🛠 Développement
-
 - **nodemon** : Redémarre automatiquement le serveur lors de modifications de fichiers.
 - **ts-node** : Permet d'exécuter du TypeScript directement sans compilation manuelle.
 - **tsx** : Exécuteur rapide de fichiers TypeScript avec support ESModules, utile en dev.
 - **tsconfig-paths** : Permet d'utiliser les alias définis dans `tsconfig.json`.
-
 ##### 🧹 Qualité de code
-
 - **eslint** : Linter JavaScript/TypeScript.
 - **@typescript-eslint/parser** : Parseur ESLint pour TypeScript.
 - **@typescript-eslint/eslint-plugin** : Plugin ESLint avec des règles spécifiques à TypeScript.
@@ -155,96 +161,82 @@ Voici une brève description des principales bibliothèques utilisées dans ce p
 - **eslint-config-prettier** : Désactive les règles ESLint conflictuelles avec Prettier.
 - **eslint-plugin-prettier** : Intègre Prettier dans ESLint.
 - **globals** : Fournit des globales pour différents environnements (utile avec ESLint).
-
 ##### 📚 Documentation
-
 - **swagger-jsdoc** : Génère la documentation Swagger à partir de commentaires JSDoc.
 - **swagger-ui-express** : Sert l’interface Swagger UI dans une app Express.
-
 ##### 📦 Utilitaires
-
 - **uuid** : Génère des identifiants uniques.
-
 ### Frontend
-
 ---
-
-## Utilisation de Swagger UI pour la documentation
-
----
-
-## Démarrer avec Docker
-
-### 1. Construire l'image
-
-Pour construire les images Docker à partir du `Dockerfile` et des services définis dans le fichier `docker-compose.yml`, exécutez la commande suivante :
-
-```bash
-docker compose build
-```
-
-### 2. Démarrer les conteneurs
-
-Une fois l'image construite, vous pouvez démarrer les conteneurs en mode détacher avec la commande suivante :
-
-```bash
-docker compose up -d
-```
-
-### 3. Accéder à l'application
-
-Une fois que les conteneurs sont en cours d'exécution, vous pouvez accéder à l'application via :
-http://localhost:3000.
 
 ### 4. Executer les fichier de test
 
 #### Backend
 
-Dans le dossier backend, vous pouver lancer les fichiers de test avec la commande suivante
-
+Dans le dossier backend, vous pouver lancer les fichiers de test avec la commande suivante.
 ```bash
 npm run test
 ```
-
 #### Frontend
 
-### 5. Arreter l'application
-
-Vous pouvez arréter l'application avec la commande suivante :
-
-```bash
-docker compose down -v
-```
-
 ---
-
-## 📂 Structure du projet
-
+## 6. Structure du projet
 ```
 iKanban/
-├── backend/
-│   ├── database/                 # Code de la base de données (SQL)
-│   │   ├── Dockerfile            # Dockerfile pour la base de données
-│   ├── dist/                     # Code compilé (issu de TypeScript)
-│   ├── node_modules/             # Modules Node.js
-│   ├── src/                      # Code source de l'API
-│   │   ├── config/               # Configurations de l'application
-│   │   ├── controllers/          # Contrôleurs pour l'API
-│   │   ├── models/               # Modèles de données
-│   │   ├── routes/               # Routes de l'API
-│   │   ├── services/             # Services (logique métier)
-│   │   ├── server.ts             # Entrée principale de l'application
-│   ├── Dockerfile                # Dockerfile pour l'API backend
-│   ├── package.json              # Dépendances du backend
-│   ├── tsconfig.json             # Configuration TypeScript pour le backend
-├── .env                          # Variables d'environnement globales
-├── .gitignore                    # Fichiers à ignorer par Git
-├── docker-compose.yml            # Configuration des services Docker
-├── README.md                     # Documentation du projet
-├── .prettierrc                   # Configuration Prettier
-└── .dockerignore                 # Fichiers à ignorer lors de la création de l'image Docker
+├── front/                              # Code source de l'application frontend (client)
+│   ├── dist/                           # Code JavaScript généré par Vite (à ne pas modifier)
+│   ├── node_modules/                   # Dépendances installées (gérées par npm/yarn/pnpm)
+│   ├── public/                         # Fichiers statiques publics (favicon, images, etc.)
+│   ├── src/                            # Code source TypeScript du frontend
+│   │   ├── component/                  # Composants réutilisables (UI, boutons, formulaires...)
+│   │   ├── config/                     # Configuration globale (ex. : base URL API, constantes)
+│   │   ├── pages/                      # Pages de l'application (par ex. : Login, Dashboard)
+│   │   ├── services/                   # Fonctions pour communiquer avec l’API (fetch/axios)
+│   │   ├── styles/                     # Fichiers CSS ou modules CSS
+│   │   ├── types/                      # Déclarations de types TypeScript (interfaces, DTO)
+│   │   ├── utils/                      # Fonctions utilitaires (helpers, validation, etc.)
+│   │   ├── main.ts                     # Fichier d'entrée de l'application frontend
+│   │   └── vite-env.d.ts               # Types injectés automatiquement pour l’environnement Vite
+│   ├── test/                           # Tests unitaires et d'intégration du frontend
+│   ├── .env                            # Variables d'environnement du frontend (VITE_API_URL, etc.)
+│   ├── .prettierrc                     # Configuration Prettier pour le frontend
+│   ├── Dockerfile                      # Dockerfile pour construire l’image du frontend
+│   ├── index.html                      # Point d’entrée HTML (utilisé par Vite)
+│   ├── package.json                    # Dépendances, scripts et métadonnées du frontend
+│   ├── tsconfig.json                   # Configuration TypeScript du frontend
+│   └── vite.config.ts                  # Configuration de Vite (alias, plugins, etc.)
+├── backend/                            # Partie serveur de l'application (API REST + DB)
+│   ├── database/                       # Scripts SQL et configuration Docker pour PostgreSQL
+│   │   └── Dockerfile                  # Dockerfile pour construire l'image PostgreSQL
+│   ├── dist/                           # Code JavaScript compilé depuis TypeScript (ne pas modifier)
+│   ├── node_modules/                   # Dépendances Node.js (backend)
+│   ├── src/                            # Dossier source de l'API Express
+│   │   ├── api/                        # Dossier contenant les versions d'API REST
+│   │   │   └── v1/                     # Version 1 de l’API
+│   │   │       ├── controllers/        # Contrôleurs Express (gèrent les requêtes HTTP)
+│   │   │       ├── repositories/       # Fonctions SQL pour interagir avec la base de données
+│   │   │       ├── routes/             # Définition des endpoints et des routes
+│   │   │       └── services/           # Logique métier entre les contrôleurs et les repositories
+│   │   ├── config/                     # Fichiers de configuration (DB, logger, etc.)
+│   │   ├── middlewares/                # Middlewares Express (authentification, erreurs, etc.)
+│   │   ├── types/                      # Types TypeScript partagés pour l’API (DTO, enums, etc.)
+│   │   ├── Dockerfile                  # Dockerfile pour builder uniquement la partie `src` si besoin
+│   │   ├── app.ts                      # Configuration de l'app Express (middlewares + routes)
+│   │   └── server.ts                   # Fichier de lancement du serveur Express (listen) 
+│   ├── test/                           # Tests unitaires et d'intégration du backend
+│   ├── .mocharc.json                   # Configuration pour le framework de tests Mocha
+│   ├── Dockerfile                      # Dockerfile principal pour builder l’image backend
+│   ├── package.json                    # Dépendances, scripts et métadonnées du backend
+│   ├── tsconfig.json                   # Configuration TypeScript pour le backend
+│   ├── .env                            # Variables d’environnement du backend (DB_HOST, PORT, etc.)
+│   ├── eslint.config.js                # Configuration ESLint (linting)
+│   ├── nodemon.json                    # Configuration Nodemon (rechargement automatique en dev)
+│   └── .prettierrc                     # Configuration Prettier (formatage du code backend)
+├── .gitignore                          # Fichiers/dossiers ignorés par Git
+├── docker-compose.yml                  # Orchestration Docker : frontend, backend, db, reverse proxy
+└── README.md                           # Documentation du projet (installation, usage, endpoints, etc.)
 ```
-
 ---
-
-## License
+## 7. License
+This project is licensed under the [MIT License](./LICENSE).  
+Feel free to use, modify and distribute it.
