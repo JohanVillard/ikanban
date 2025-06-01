@@ -56,8 +56,6 @@ class UserService {
         confirmationPassword: string
     ): void {
         if (plainPassword !== confirmationPassword) {
-            console.log(plainPassword + ' vs ' + confirmationPassword);
-
             throw new Error('Les mots de passe ne correspondent pas');
         }
     }
@@ -78,7 +76,6 @@ class UserService {
         email: string,
         password: string
     ): Promise<Omit<User, 'passwordHash'>> {
-        Promise<{ id: string; name: string; email: string } | null>;
         try {
             if (email.length === 0 || password.length === 0) {
                 throw new Error('Email ou mot de passe requis');
@@ -92,8 +89,6 @@ class UserService {
             const hash = user.password_hash;
 
             const isValid = compareSync(password, hash);
-            console.log(isValid);
-
             if (!isValid) {
                 throw new Error('Les identifiants sont invalides');
             }

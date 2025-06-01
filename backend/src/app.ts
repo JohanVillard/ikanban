@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -12,16 +13,21 @@ import taskRoutes from '../src/api/v1/routes/taskRoutes';
 
 const app = express();
 
+// Je sécurise les headers HTTP
+app.use(helmet());
+
 app.use(cookieParser());
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use(express.json());
 
+// J'améliore les logs
 app.use(morgan('dev'));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+// Je déclare les routes
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', boardRoutes);

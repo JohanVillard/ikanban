@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import TaskDb from '../repositories/taskDb';
 import { Task } from '../../../types/task';
-import { log } from 'console';
 
 /**
  * Service pour la gestion des tâches.
  * Ce service contient des méthodes pour créer, lire, mettre à jour et supprimer des tâches.
  * Il interagit avec la base de données via la classe `TaskDb`.
- */ class TaskService {
+ */
+class TaskService {
     private taskDb: TaskDb;
 
     constructor() {
