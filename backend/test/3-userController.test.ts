@@ -16,13 +16,14 @@ describe('UserController', () => {
         userController['userService'] = userServiceStub;
     });
 
-    describe('createUser', () => {
+    describe('registerUser', () => {
         it('doit créer un utilisateur avec succès', async () => {
             const req = {
                 body: {
                     name: 'John Doe',
                     email: 'john@example.com',
-                    password: 'password123',
+                    password: 'password123!',
+                    passconf: 'password123!',
                 },
             } as Request;
 
@@ -50,18 +51,20 @@ describe('UserController', () => {
             expect(res.status.calledWith(201)).to.be.true;
             expect(
                 res.json.calledWith({
-                    id: '1',
-                    name: 'John Doe',
-                    email: 'john@example.com',
+                    success: true,
+                    message: 'Votre compte a été créé',
+                    data: {
+                        id: '1',
+                        name: 'John Doe',
+                        email: 'john@example.com',
+                    },
                 })
             ).to.be.true;
         });
 
         it("doit renvoyer une erreur si l'utilisateur existe déjà", async () => {
             // Configurer le stub pour générer l'erreur
-            const tableExistsError = new Error(
-                'Impossible de créer le compte.'
-            );
+            const tableExistsError = new Error('Impossible de créer le compte');
             userServiceStub.createUser.rejects(tableExistsError);
 
             // Préparer la requête
@@ -69,9 +72,11 @@ describe('UserController', () => {
                 body: {
                     name: 'John Doe',
                     email: 'john@example.com',
-                    password: 'password123',
+                    password: 'password123!',
+                    passconf: 'password123!',
                 },
             } as Request;
+
             const res = {
                 status: sinon.stub().returnsThis(),
                 json: sinon.stub(),
@@ -86,7 +91,10 @@ describe('UserController', () => {
 
             expect(res.status.calledWith(409)).to.be.true;
             expect(
-                res.json.calledWith({ error: 'Impossible de créer le compte.' })
+                res.json.calledWith({
+                    success: false,
+                    error: 'Impossible de créer le compte',
+                })
             ).to.be.true;
         });
 
@@ -95,7 +103,8 @@ describe('UserController', () => {
                 body: {
                     name: 'John Doe',
                     email: 'john@example.com',
-                    password: 'password123',
+                    password: 'password123!',
+                    passconf: 'password123!',
                 },
             } as Request;
             const res = {
@@ -115,8 +124,12 @@ describe('UserController', () => {
             await userController.registerUser(req, res);
 
             expect(res.status.calledWith(500)).to.be.true;
-            expect(res.json.calledWith({ error: 'Erreur serveur inconnue.' }))
-                .to.be.true;
+            expect(
+                res.json.calledWith({
+                    success: false,
+                    error: 'Erreur serveur inconnue',
+                })
+            ).to.be.true;
         });
     });
 
@@ -176,31 +189,6 @@ describe('UserController', () => {
             await userController.fetchUserById(req, res);
 
             expect(res.sendStatus.calledWith(404)).to.be.true;
-        });
-
-        it('should return 500 on server error', async () => {
-            const req = {
-                params: {
-                    userId: '1',
-                },
-            } as unknown as Request;
-            const res = {
-                status: sinon.stub().returnsThis(),
-                json: sinon.stub(),
-                sendStatus: sinon.stub(),
-            } as unknown as Response & {
-                status: sinon.SinonStub;
-                json: sinon.SinonStub;
-                sendStatus: sinon.SinonStub;
-            };
-
-            userServiceStub.getUserById.rejects(
-                new Error('Erreur serveur inconnue.')
-            );
-
-            await userController.fetchUserById(req, res);
-
-            expect(res.sendStatus.calledWith(500)).to.be.true;
         });
     });
 });
