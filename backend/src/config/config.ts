@@ -1,15 +1,13 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-console.log('NODE_ENV', process.env.NODE_ENV);
-
 const env = process.env.NODE_ENV || 'development';
 
 // Utilisation de import.meta.url pour simuler __dirname
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // charger les variables d'environnement
-const envFile = path.resolve(__dirname, `../../../${env}`);
+const envFile = path.resolve(__dirname, `../../.env.${env}`);
 dotenv.config({ path: envFile });
 console.log('Env loaded:', envFile);
 console.log('NODE_ENV:', process.env.NODE_ENV);
