@@ -4,6 +4,8 @@ services:
             context: ./backend/
             dockerfile: ./sql/Dockerfile
         restart: always
+        env_file:
+          - .env.development 
         environment:
             POSTGRES_USER: ${DB_USER}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -19,18 +21,18 @@ services:
     ikanban_api:
         build:
             context: ./backend/
-            dockerfile: ./src/Dockerfile
+            dockerfile: ./Dockerfile
         restart: always
         ports:
             - '3000:3000'
         env_file:
-            - .env
+            - .env.development
         depends_on:
             - ikanban_db
         volumes:
             - ./backend:/app
             - /app/node_modules # évite que le node_modules local écrase celui du conteneur
-        command: npx nodemon --exec 'node --loader ts-node/esm --experimental-specifier-resolution=node' ./src/server.ts
+        command: npm run start:dev
 
     ikanban_front:
         build:

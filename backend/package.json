@@ -4,8 +4,9 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "start:dev": "docker-compose up --build",
         "build": "tsc",
+        "start:dev": "NODE_ENV=development node --watch --loader ts-node/esm src/server.ts src/server.ts",
+        "start:prod": "NODE_ENV=production node dist/server.js",
         "test": "NODE_ENV=test node --loader ts-node/esm --experimental-specifier-resolution=node node_modules/mocha/bin/mocha.js 'test/**/*.test.ts'",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
@@ -49,6 +50,7 @@
         "chai-http": "^5.1.1",
         "eslint": "^9.23.0",
         "eslint-config-prettier": "^10.1.1",
+        "eslint-plugin-file-extension-in-import-ts": "^2.1.1",
         "eslint-plugin-prettier": "^5.2.6",
         "globals": "^16.0.0",
         "mocha": "^11.1.0",

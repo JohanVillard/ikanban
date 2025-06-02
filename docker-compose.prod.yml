@@ -1,0 +1,49 @@
+services:
+    ikanban_db:
+        build:
+            context: ./backend/
+            dockerfile: ./sql/Dockerfile
+        restart: always
+        env_file:
+          - .env.production
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+            LANG: fr_FR.UTF-8
+            LC_ALL: fr_FR.UTF-8
+        ports:
+            - '${DB_PORT}:5432'
+        volumes:
+            - db-prod-data:/var/lib/postgresql/data
+            - ./backend/sql:/docker-entrypoint-initdb.d
+
+    ikanban_api:
+        build:
+            context: ./backend/
+            dockerfile: ./Dockerfile
+        restart: always
+        ports:
+            - '3000:3000'
+        env_file:
+            - .env.production
+        depends_on:
+            - ikanban_db
+        volumes:
+            - ./backend:/app
+            - /app/node_modules # évite que le node_modules local écrase celui du conteneur
+        command: npm run start:prod
+
+    ikanban_front:
+        build:
+            context: ./front/
+            dockerfile: ./Dockerfile
+        restart: always
+        ports:
+          - '5173:5173'
+        volumes:
+            - ./front:/app
+            - /app/node_modules
+
+volumes:
+    db-prod-data:
