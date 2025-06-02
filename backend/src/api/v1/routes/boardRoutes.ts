@@ -1,8 +1,8 @@
 import express from 'express';
-import BoardController from '../controllers/boardController';
-import authMiddleware from '../../../middlewares/authMiddleware';
-import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
-import boardValidationSchema from '../../../middlewares/boardValidation';
+import BoardController from '../controllers/boardController.js';
+import authMiddleware from '../../../middlewares/authMiddleware.js';
+import authorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';
+import boardValidationSchema from '../../../middlewares/boardValidation.js';
 
 const router = express.Router();
 const boardController = new BoardController();

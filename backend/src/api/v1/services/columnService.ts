@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import ColumnDb from '../repositories/columnDb';
-import { Column } from '../../../types/column';
+import ColumnDb from '../repositories/columnDb.js';
+import { Column } from '../../../types/column.js';
 
 class ColumnService {
     private columnDb: ColumnDb;

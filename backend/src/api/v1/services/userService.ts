@@ -1,9 +1,9 @@
 import { genSaltSync, hashSync, compareSync } from 'bcrypt-ts';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
-import { User } from '../../../types/user';
-import UserDb from '../repositories/userDb';
-import config from '../../../config/config';
+import { User } from '../../../types/user.js';
+import UserDb from '../repositories/userDb.js';
+import config from '../../../config/config.js';
 
 class UserService {
     private userDb: UserDb;

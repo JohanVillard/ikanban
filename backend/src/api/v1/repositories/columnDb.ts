@@ -1,5 +1,5 @@
-import { ColumnDbRecord } from '../../../types/column';
-import pool from '../../../config/connectDB';
+import { ColumnDbRecord } from '../../../types/column.js';
+import pool from '../../../config/connectDB.js';
 
 class ColumnDb {
     async create(

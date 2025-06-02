@@ -1,4 +1,4 @@
-import BoardService from '../api/v1/services/boardService';
+import BoardService from '../api/v1/services/boardService.js';
 import { Request, Response, NextFunction } from 'express';
 
 /**

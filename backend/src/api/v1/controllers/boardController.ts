@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import BoardService from '../services/boardService';
+import BoardService from '../services/boardService.js';
 import { validationResult } from 'express-validator';
 
 class BoardController {

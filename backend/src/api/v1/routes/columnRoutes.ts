@@ -1,8 +1,8 @@
 import express from 'express';
-import ColumnController from '../controllers/columnController';
-import authMiddleware from '../../../middlewares/authMiddleware';
-import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
-import columnValidationSchema from '../../../middlewares/columnValidation';
+import ColumnController from '../controllers/columnController.js';
+import authMiddleware from '../../../middlewares/authMiddleware.js';
+import authorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';
+import columnValidationSchema from '../../../middlewares/columnValidation.js';
 
 const router = express.Router();
 const columnController = new ColumnController();

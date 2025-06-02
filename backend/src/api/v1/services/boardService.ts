@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import BoardDb from '../repositories/boardDb';
-import { Board } from '../../../types/board';
+import BoardDb from '../repositories/boardDb.js';
+import { Board } from '../../../types/board.js';
 
 class BoardService {
     private boardDb: BoardDb;

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import TaskDb from '../repositories/taskDb';
-import { Task } from '../../../types/task';
+import TaskDb from '../repositories/taskDb.js';
+import { Task } from '../../../types/task.js';
 
 /**
  * Service pour la gestion des tâches.

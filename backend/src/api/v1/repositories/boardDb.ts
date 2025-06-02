@@ -1,5 +1,5 @@
-import pool from '../../../config/connectDB';
-import { BoardDbRecord } from '../../../types/board';
+import pool from '../../../config/connectDB.js';
+import { BoardDbRecord } from '../../../types/board.js';
 
 class BoardDb {
     async create(

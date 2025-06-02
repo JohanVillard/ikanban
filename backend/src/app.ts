@@ -4,12 +4,12 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocs from './config/swagger';
-import authRoutes from '../src/api/v1/routes/auth';
-import userRoutes from '../src/api/v1/routes/userRoutes';
-import boardRoutes from '../src/api/v1/routes/boardRoutes';
-import columnRoutes from '../src/api/v1/routes/columnRoutes';
-import taskRoutes from '../src/api/v1/routes/taskRoutes';
+import swaggerDocs from './config/swagger.js';
+import authRoutes from './api/v1/routes/auth.js';
+import userRoutes from './api/v1/routes/userRoutes.js';
+import boardRoutes from './api/v1/routes/boardRoutes.js';
+import columnRoutes from './api/v1/routes/columnRoutes.js';
+import taskRoutes from './api/v1/routes/taskRoutes.js';
 
 const app = express();
 

@@ -1,5 +1,5 @@
-import pool from '../../../config/connectDB';
-import { UserDbRecord } from '../../../types/user';
+import pool from '../../../config/connectDB.js';
+import { UserDbRecord } from '../../../types/user.js';
 
 class UserDb {
     async create(

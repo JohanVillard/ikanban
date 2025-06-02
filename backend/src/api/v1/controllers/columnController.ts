@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import ColumnService from '../services/columnService';
+import ColumnService from '../services/columnService.js';
 import { validationResult } from 'express-validator';
 
 class ColumnController {

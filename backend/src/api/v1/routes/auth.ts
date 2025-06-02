@@ -1,9 +1,9 @@
 import express from 'express';
-import UserController from '../controllers/userController';
-import authValidationSchema from '../../../middlewares/authValidation';
-import registerValidationSchema from '../../../middlewares/registerValidation';
-import authMiddleware from '../../../middlewares/authMiddleware';
-import loginLimiter from '../../../middlewares/loginLimiter';
+import UserController from '../controllers/userController.js';
+import authValidationSchema from '../../../middlewares/authValidation.js';
+import registerValidationSchema from '../../../middlewares/registerValidation.js';
+import authMiddleware from '../../../middlewares/authMiddleware.js';
+import loginLimiter from '../../../middlewares/loginLimiter.js';
 
 const router = express.Router();
 const userController = new UserController();

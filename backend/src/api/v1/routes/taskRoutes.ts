@@ -1,8 +1,8 @@
 import express from 'express';
-import TaskController from '../controllers/taskController';
-import authMiddleware from '../../../middlewares/authMiddleware';
-import authorizationMiddleware from '../../../middlewares/authorizationMiddleware';
-import taskValidationSchema from '../../../middlewares/taskValidation';
+import TaskController from '../controllers/taskController.js';
+import authMiddleware from '../../../middlewares/authMiddleware.js';
+import authorizationMiddleware from '../../../middlewares/authorizationMiddleware.js';
+import taskValidationSchema from '../../../middlewares/taskValidation.js';
 
 const router = express.Router();
 const taskController = new TaskController();

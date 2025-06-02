@@ -1,7 +1,7 @@
 import express from 'express';
-import UserController from '../controllers/userController';
-import authMiddleware from '../../../middlewares/authMiddleware';
-import updateUserValidationSchema from '../../../middlewares/updateUserValidation';
+import UserController from '../controllers/userController.js';
+import authMiddleware from '../../../middlewares/authMiddleware.js';
+import updateUserValidationSchema from '../../../middlewares/updateUserValidation.js';
 
 const router = express.Router();
 const userController = new UserController();

@@ -1,5 +1,5 @@
-import { Task, TaskDbRecord } from '../../../types/task';
-import pool from '../../../config/connectDB';
+import { Task, TaskDbRecord } from '../../../types/task.js';
+import pool from '../../../config/connectDB.js';
 
 /**
  * Classe pour interagir avec la base de données des tâches.

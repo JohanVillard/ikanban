@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import TaskService from '../services/taskService';
-import { Task } from 'types/task';
+import TaskService from '../services/taskService.js';
+import { Task } from 'types/task.js';
 import { validationResult } from 'express-validator';
 
 /**
