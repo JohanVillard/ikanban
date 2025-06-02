@@ -5,13 +5,13 @@ FROM node:22.14.0-alpine3.21
 WORKDIR /app
 
 # Copier le package.json et le package-lock.json depuis la racine du projet vers le conteneur
-COPY ../package*.json ./
+COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm install --force --loglevel verbose
 
 # Copier tous les fichiers du projet vers le conteneur (y compris le .env)
-COPY ../ ./
+COPY . .
 
 # Exposer le port de l'application
 EXPOSE 3000
