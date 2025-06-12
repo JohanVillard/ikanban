@@ -39,6 +39,8 @@ services:
             context: ./front/
             dockerfile: ./Dockerfile
         restart: always
+        env_file:
+          - ./front/.env.development
         ports:
           - '5173:5173'
         volumes:
