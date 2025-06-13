@@ -366,7 +366,6 @@ router.put(
  *                 type: string
  *                 description: La description de la tâche.
  *                 example: "D'abord, il faut peler la pomme puis la couper en quartier"
- *             required: []  # Aucun champ n'est requis, ils sont tous optionnels
  *     responses:
  *       200:
  *         description: La tâche a été modifiée avec succès.
@@ -391,6 +390,10 @@ router.put(
  *                   type: string
  *                   description: La description de la tâche.
  *                   example: "D'abord, il faut peler la pomme puis la couper en quartier"
+ *                 position:
+ *                   type: number
+ *                   description: La position de la tâche dans la colonne où elle se trouve.
+ *                   example: 2
  *       404:
  *         description: La tâche ou un des objets parents (tableau, colonne) n'a pas été trouvé.
  *       500:
@@ -406,7 +409,7 @@ router.patch(
 
 /**
  * @swagger
- * /board/{boardId}/column/{colId}/task/{taskId}:
+ * /board/{boardId}/task/{taskId}:
  *   delete:
  *     security:
  *       - bearerAuth: []

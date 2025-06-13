@@ -25,6 +25,7 @@ const userController = new UserController();
  *               - name
  *               - email
  *               - password
+ *               - passconf
  *             properties:
  *               name:
  *                 type: string
@@ -37,6 +38,10 @@ const userController = new UserController();
  *               password:
  *                 type: string
  *                 description: Le mot de passe de l'utilisateur.
+ *                 example: 'Motdepasse123!'
+ *               passconf:
+ *                 type: string
+ *                 description: Le mot de passe que l'utilisateur vient de saisir.
  *                 example: 'Motdepasse123!'
  *     responses:
  *       201:
