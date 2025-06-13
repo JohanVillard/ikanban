@@ -5,7 +5,8 @@ class ColumnDb {
     async create(
         id: string,
         boardId: string,
-        name: string
+        name: string,
+        wip: number
     ): Promise<ColumnDbRecord> {
         try {
             // Récupérer la plus grande position actuelle dans le tableau
@@ -17,8 +18,8 @@ class ColumnDb {
 
             const position = positionResult.rows[0].next_position;
             const query =
-                'INSERT INTO columns (id, board_id, name, position) VALUES ($1, $2, $3, $4) RETURNING *';
-            const values = [id, boardId, name, position];
+                'INSERT INTO columns (id, board_id, name, position, wip) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+            const values = [id, boardId, name, position, wip];
 
             const res = await pool.query(query, values);
 
@@ -116,11 +117,15 @@ class ColumnDb {
         }
     }
 
-    async update(name: string, id: string): Promise<ColumnDbRecord> {
+    async update(
+        name: string,
+        wip: number | null,
+        id: string
+    ): Promise<ColumnDbRecord> {
         try {
             const query =
-                'UPDATE columns set name = $1 WHERE id = $2 RETURNING *';
-            const values = [name, id];
+                'UPDATE columns SET name = $1, wip = $2 WHERE id = $3 RETURNING *';
+            const values = [name, wip, id];
 
             const res = await pool.query(query, values);
 

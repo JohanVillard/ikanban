@@ -59,7 +59,11 @@ import { validationResult } from 'express-validator';
         } catch (error: any) {
             console.error(`Erreur en créant la tâche (controleur): ${error}`);
 
-            if (error.message === 'Ce nom de tâche est déjà utilisé') {
+            if (
+                error.message === 'Ce nom de tâche est déjà utilisé' ||
+                error.message ===
+                    'Le nombre de tâches maximum pour cette colonne a été atteint'
+            ) {
                 res.status(409).json({
                     success: false,
                     error: error.message,
@@ -250,7 +254,11 @@ import { validationResult } from 'express-validator';
                 `Erreur en modifiant la tâche (controleur): ${error}`
             );
 
-            if (error.message === 'Ce nom de tâche est déjà utilisé') {
+            if (
+                error.message === 'Ce nom de tâche est déjà utilisé' ||
+                error.message ===
+                    'Le nombre de tâches maximum pour cette colonne a été atteint'
+            ) {
                 res.status(409).json({ success: false, error: error.message });
             } else if (
                 error.message ===
@@ -298,7 +306,9 @@ import { validationResult } from 'express-validator';
 
             if (
                 error.message ===
-                'Impossible de modifier la tâche : le nom est déjà pris'
+                    'Impossible de modifier la tâche : le nom est déjà pris' ||
+                error.message ===
+                    'Le nombre de tâches maximum pour cette colonne a été atteint'
             ) {
                 res.status(409).json({
                     success: false,

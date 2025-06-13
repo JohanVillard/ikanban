@@ -31,11 +31,16 @@ const columnController = new ColumnController();
  *             type: object
  *             required:
  *               - name
+ *               - wip
  *             properties:
  *               name:
  *                 type: string
  *                 description: Le nom de la colonne.
  *                 example: 'En cours'
+ *               wip:
+ *                 type: number
+ *                 description: Le nombre limite de tâches de la colonnes (si null, le nombre de tâches est infini).
+ *                 example: null
  *     responses:
  *       201:
  *         description: Colonne créé avec succès.
@@ -56,6 +61,10 @@ const columnController = new ColumnController();
  *                   type: string
  *                   description: Le nom de la colonne.
  *                   example: 'En cours'
+ *                 wip:
+ *                   type: number
+ *                   description: Le nombre limite de tâches de la colonnes (si null, le nombre de tâches est infini).
+ *                   example: null
  *                 position:
  *                   type: number
  *                   description: La position de la colonne.
@@ -284,6 +293,10 @@ router.get(
  *                 type: string
  *                 description: Le nom de la colonne.
  *                 example: 'Terminée'
+ *               wip:
+ *                 type: number
+ *                 description: Le nombre limite de tâches de la colonnes (si null, le nombre de tâches est infini).
+ *                 example: 3
  *     responses:
  *       200:
  *         description: La colonne a été modifiée avec succès.
@@ -304,6 +317,10 @@ router.get(
  *                   type: string
  *                   description: Le nom de la colonne.
  *                   example: 'En cours'
+ *                 wip:
+ *                   type: number
+ *                   description: Le nombre limite de tâches de la colonnes (si null, le nombre de tâches est infini).
+ *                   example: 3
  *                 position:
  *                   type: number
  *                   description: La position de la colonne.

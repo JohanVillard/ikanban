@@ -3,6 +3,7 @@ export type ColumnDbRecord = {
     board_id: string;
     name: string;
     position: number;
+    wip: number;
 };
 
 export type Column = {
@@ -10,4 +11,5 @@ export type Column = {
     boardId: string;
     name: string;
     position: number;
+    wip: number;
 };

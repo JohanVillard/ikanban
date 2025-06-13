@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import TaskDb from '../repositories/taskDb.js';
 import { Task } from '../../../types/task.js';
+import ColumnService from './columnService.js';
 
 /**
  * Service pour la gestion des tâches.
@@ -9,9 +10,11 @@ import { Task } from '../../../types/task.js';
  */
 class TaskService {
     private taskDb: TaskDb;
+    private columnService: ColumnService;
 
     constructor() {
         this.taskDb = new TaskDb();
+        this.columnService = new ColumnService();
     }
 
     /**
@@ -32,6 +35,8 @@ class TaskService {
         columnId: string
     ): Promise<Task> {
         try {
+            await this.canAddTaskToColumn(columnId);
+
             const taskExists = await this.taskDb.findByNameAndBoardId(
                 name,
                 columnId
@@ -176,6 +181,11 @@ class TaskService {
                 );
             }
 
+            // On check si on peux ajouter des tâches uniquement si elles n'appartient pas à la colonne
+            if (taskData.columnId != taskToUpdate.column_id) {
+                await this.canAddTaskToColumn(taskData.columnId);
+            }
+
             // Je vérifie si le nom de la tâche n'est pas pris dans le tableau
             // À la condition que le nom d'origine de la tâche soit différent du nouveau
             if (taskData.name !== taskToUpdate.name) {
@@ -227,11 +237,22 @@ class TaskService {
         taskData: Partial<Task>
     ): Promise<Task> {
         try {
+            if (!taskData.columnId) {
+                throw new Error(
+                    "L'id de la colonne n'est pas fournie dans la tâche"
+                );
+            }
+
             const taskToUpdate = await this.taskDb.findById(id);
             if (!taskToUpdate) {
                 throw new Error(
                     "Impossible de modifier la tâche : elle n'existe pas"
                 );
+            }
+
+            // On check si on peux ajouter des tâches uniquement si elles n'appartient pas à la colonne
+            if (taskData.columnId != taskToUpdate.column_id) {
+                await this.canAddTaskToColumn(taskData.columnId);
             }
 
             // J'utilise ?? car il accepte les valeurs falsy.
@@ -287,6 +308,16 @@ class TaskService {
                 `Erreur lors de la suppression de la tâche (Service): ${error}`
             );
             throw error;
+        }
+    }
+
+    async canAddTaskToColumn(columnId: string): Promise<void> {
+        const canAddTaskToColumn =
+            await this.columnService.canAddTask(columnId);
+        if (!canAddTaskToColumn) {
+            throw new Error(
+                'Le nombre de tâches maximum pour cette colonne a été atteint'
+            );
         }
     }
 }

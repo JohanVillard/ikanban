@@ -1,16 +1,30 @@
 import { v4 as uuidv4 } from 'uuid';
 import ColumnDb from '../repositories/columnDb.js';
 import { Column } from '../../../types/column.js';
+import TaskDb from '../repositories/taskDb.js';
+import { log } from 'console';
 
 class ColumnService {
     private columnDb: ColumnDb;
+    private taskDb: TaskDb;
 
     constructor() {
         this.columnDb = new ColumnDb();
+        this.taskDb = new TaskDb();
     }
 
-    async createColumn(name: string, boardId: string): Promise<Column> {
+    async createColumn(
+        name: string,
+        wip: number,
+        boardId: string
+    ): Promise<Column> {
         try {
+            if (wip <= 0) {
+                throw new Error(
+                    'Le nombre de tâches autorisées doit être supérieure à zéro'
+                );
+            }
+
             const columnExists = await this.columnDb.findByNameAndByBoardId(
                 name,
                 boardId
@@ -20,7 +34,7 @@ class ColumnService {
             }
 
             const id = uuidv4();
-            const column = await this.columnDb.create(id, boardId, name);
+            const column = await this.columnDb.create(id, boardId, name, wip);
             if (!column) {
                 throw new Error('La création de la colonne a échouée');
             }
@@ -101,20 +115,48 @@ class ColumnService {
         }
     }
 
-    async updateColumn(name: string, id: string): Promise<Column> {
+    async updateColumn(name: string, wip: number, id: string): Promise<Column> {
         try {
+            if (wip && wip <= 0) {
+                throw new Error(
+                    'Le nombre de tâches autorisées doit être supérieure à zéro'
+                );
+            }
+
             const columnToUpdate = await this.columnDb.findById(id);
             if (!columnToUpdate) {
                 throw new Error(
                     'Impossible de modifier la colonne : elle n’existe pas'
                 );
             }
-            if (columnToUpdate.name === name) {
+
+            const tasks = await this.taskDb.findByColumnId(id);
+            if (wip && tasks && wip < tasks.length) {
                 throw new Error(
-                    'Impossible de modifier la colonne : le nom est déjà pris'
+                    `Le nombre de tâches autorisées doit être supérieure au nombre de tâches stockées dans la colonne`
                 );
             }
-            const updatedColumn = await this.columnDb.update(name, id);
+
+            if (columnToUpdate.name !== name) {
+                const columns = await this.columnDb.findByNameAndByBoardId(
+                    name,
+                    columnToUpdate.board_id
+                );
+
+                if (columns) {
+                    throw new Error(
+                        'Impossible de modifier la colonne : le nom est déjà pris'
+                    );
+                }
+            }
+
+            const formatedWip = wip ? wip : null;
+
+            const updatedColumn = await this.columnDb.update(
+                name,
+                formatedWip,
+                id
+            );
             if (!updatedColumn) {
                 throw new Error(
                     'Impossible de modifier la colonne : elle n’existe pas ou les données sont identiques'
@@ -124,6 +166,7 @@ class ColumnService {
             return {
                 id: updatedColumn.id,
                 name: updatedColumn.name,
+                wip: updatedColumn.wip,
                 boardId: updatedColumn.board_id,
                 position: updatedColumn.position,
             };
@@ -149,6 +192,27 @@ class ColumnService {
             console.error(
                 `Erreur lors de la suppression de la colonne (Service): ${error}`
             );
+            throw error;
+        }
+    }
+
+    async canAddTask(columnId: string): Promise<boolean> {
+        try {
+            const dbColumn = await this.columnDb.findById(columnId);
+            if (!dbColumn) {
+                throw new Error(
+                    'Aucun colonne correspondante n’a été trouvée.'
+                );
+            }
+
+            const tasks = await this.taskDb.findByColumnId(columnId);
+
+            return (
+                tasks === null ||
+                dbColumn.wip === null ||
+                dbColumn.wip > tasks.length
+            );
+        } catch (error) {
             throw error;
         }
     }

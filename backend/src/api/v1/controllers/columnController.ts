@@ -25,10 +25,14 @@ class ColumnController {
         }
 
         try {
-            const { name } = req.body;
+            const { name, wip } = req.body;
             const { boardId } = req.params;
 
-            const column = await this.columnService.createColumn(name, boardId);
+            const column = await this.columnService.createColumn(
+                name,
+                wip,
+                boardId
+            );
 
             res.status(201).json({ success: true, data: column });
         } catch (error: any) {
@@ -117,7 +121,6 @@ class ColumnController {
     updateColumn = async (req: Request, res: Response): Promise<void> => {
         // Attrape le retour du middleware de validation
         const errors = validationResult(req);
-
         if (!errors.isEmpty()) {
             res.status(422).json({
                 success: false,
@@ -127,11 +130,12 @@ class ColumnController {
         }
 
         try {
-            const { name } = req.body;
+            const { name, wip } = req.body;
             const { colId } = req.params;
 
             const updatedBoard = await this.columnService.updateColumn(
                 name,
+                wip,
                 colId
             );
 
@@ -146,6 +150,14 @@ class ColumnController {
                 'Impossible de modifier la colonne : le nom est déjà pris'
             ) {
                 res.status(409).json({
+                    success: false,
+                    error: error.message,
+                });
+            } else if (
+                error.message ===
+                `Le nombre de tâches autorisées doit être supérieure au nombre de tâches stockées dans la colonne`
+            ) {
+                res.status(400).json({
                     success: false,
                     error: error.message,
                 });
