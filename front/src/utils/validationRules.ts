@@ -47,6 +47,13 @@ export const validationRules: ValidationRule[] = [
         },
     },
     { label: 'description', notEmpty: false },
+    {
+        label: 'wip',
+        pattern: '^([1-9]\\d*)?$', // Accepte les entiers et les chaînes vides
+        errorMessages: {
+            pattern: 'Veuillez entrer uniquement des chiffres positifs',
+        },
+    },
 ];
 
 export const inputLabels = [
@@ -55,4 +62,5 @@ export const inputLabels = [
     'password',
     'passconf',
     'description',
+    'wip',
 ];

@@ -27,4 +27,5 @@ export type JsFormData = {
     email?: string;
     password?: string;
     description?: string;
+    wip?: string;
 };

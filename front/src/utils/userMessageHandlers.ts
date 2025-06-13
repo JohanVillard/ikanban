@@ -89,6 +89,7 @@ export function handleFrontValidationError(jsFormData: JsFormData): boolean {
         const value = jsFormData[label as keyof JsFormData] || '';
         const actualInput = document.querySelector(`#${label}`);
         const errorMsg = document.querySelector(`.error-${label}`);
+        console.log(rule.label);
         if (!errorMsg) continue;
 
         // Je vérifie si la règle existe puis sa validité
@@ -109,9 +110,9 @@ export function handleFrontValidationError(jsFormData: JsFormData): boolean {
         if (rule.pattern) {
             // Je crée un objet RegExp pour tester la correspondance avec le pattern d'un email
             // L'option i permet d'ignorer la casse
-            const mailPattern = new RegExp(rule.pattern, 'i');
-            const isEmailValid = mailPattern.test(value);
-            if (!isEmailValid) {
+            const pattern = new RegExp(rule.pattern, 'i');
+            const isPatternValid = pattern.test(value);
+            if (!isPatternValid) {
                 errorMsg.textContent = rule.errorMessages?.pattern || '';
                 actualInput?.setAttribute('aria-invalid', 'true');
                 isValid = false;
