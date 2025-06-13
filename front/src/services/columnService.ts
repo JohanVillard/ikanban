@@ -10,7 +10,8 @@ import {
 
 export async function createColumn(
     boardId: string,
-    name: string
+    name: string,
+    wip: string
 ): Promise<ColumnResponse> {
     try {
         const response = await fetch(
@@ -22,7 +23,7 @@ export async function createColumn(
                     Accept: 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({ name, wip }),
             }
         );
 
@@ -94,7 +95,8 @@ export async function fetchColumnByIdAndBoard(
 export async function updateColumn(
     boardId: string,
     colId: string,
-    name: string
+    name: string,
+    wip: string
 ): Promise<ColumnResponse> {
     const response = await fetch(
         `${BASE_API_URL}/board/${boardId}/column/${colId}`,
@@ -105,7 +107,7 @@ export async function updateColumn(
                 Accept: 'application/json',
             },
             credentials: 'include',
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({ name, wip }),
         }
     );
 

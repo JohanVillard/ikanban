@@ -13,6 +13,7 @@ import EditBtn from '../buttons/EditBtn';
 import NameInput from '../labeledInput/NameInput';
 import ErrorContainer from '../messageContainer/ErrorContainer';
 import ValidationContainer from '../messageContainer/ValidationContainer';
+import WipInput from '../labeledInput/WipInput';
 
 async function editColumnForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -30,14 +31,25 @@ async function editColumnForm(cssSelector: string) {
         // Je récupére la colonne et son nom
         const column = await fetchColumnByIdAndBoard(columnId, boardId);
         const columnName = column.name;
+        const oldWip = column.wip;
 
         editForm.appendChild(NameInput('Modifier le nom de la colonne'));
         const editInput = editForm.querySelector<HTMLInputElement>('#name');
         if (!editInput) {
             console.error(`Le conteneur editInput n'a pas été trouvé`);
             return;
-        } // J'affiche dans le champ de saisie le nom du tableau
+        }
+        // J'affiche dans le champ de saisie le nom de la colonne
         editInput.value = columnName;
+
+        editForm.appendChild(WipInput('Entrez le nombre maximum de tâches'));
+        const wipInput = editForm.querySelector<HTMLInputElement>('#wip');
+        if (!wipInput) {
+            console.error(`Le conteneur editInput n'a pas été trouvé`);
+            return;
+        }
+        // J'affiche dans le champ de saisie le nombre de tâche maximum
+        wipInput.value = oldWip !== null ? oldWip.toString() : '';
 
         // Je communique le résultat de la soumission
         editForm.appendChild(ValidationContainer());
@@ -48,12 +60,16 @@ async function editColumnForm(cssSelector: string) {
             e.preventDefault();
 
             const name = editInput.value;
+            const wip = wipInput.value;
 
             cleanFormErrorMsg();
 
-            const isDataValid = handleFrontValidationError({ name: name });
+            const isDataValid = handleFrontValidationError({
+                name: name,
+                wip: wip,
+            });
             if (isDataValid) {
-                const result = await updateColumn(boardId, columnId, name);
+                const result = await updateColumn(boardId, columnId, name, wip);
 
                 handleFormResponse(result);
                 if (result.success) goTo(`/board?boardId=${boardId}`);

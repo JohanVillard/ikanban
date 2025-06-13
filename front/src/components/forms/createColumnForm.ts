@@ -10,6 +10,7 @@ import CancelBtn from '../buttons/CancelBtn';
 import SubmitBtn from '../buttons/SubmitBtn';
 import NameInput from '../labeledInput/NameInput';
 import { goTo } from '../../utils/navigation';
+import WipInput from '../labeledInput/WipInput';
 
 function createColumnForm(cssSelector: string): void {
     const container = document.querySelector(cssSelector);
@@ -27,6 +28,7 @@ function createColumnForm(cssSelector: string): void {
         container.appendChild(createForm);
 
         createForm.appendChild(NameInput('Entrez le nom de la colonne'));
+        createForm.appendChild(WipInput('Entrez le nombre maximum de tâches'));
 
         // Je communique le résultat de la soumission
         createForm.appendChild(ValidationContainer());
@@ -42,17 +44,24 @@ function createColumnForm(cssSelector: string): void {
             // Je récupère la valeur dans le champ de saisie
             const createInput =
                 document.querySelector<HTMLInputElement>('.input-field');
+            const wipInput = document.querySelector<HTMLInputElement>('#wip');
 
             const name = createInput?.value;
+            const wip = wipInput?.value;
 
             cleanFormErrorMsg();
 
-            const isDataValid = handleFrontValidationError({ name: name });
+            const isDataValid = handleFrontValidationError({
+                name: name,
+                wip: wip,
+            });
             if (isDataValid) {
-                const result = await createColumn(boardId, name || '');
-
+                const result = await createColumn(
+                    boardId,
+                    name || '',
+                    wip || ''
+                );
                 handleFormResponse(result);
-
                 if (result.success) goTo(`/board?boardId=${boardId}`);
             }
         });
