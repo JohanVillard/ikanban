@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS columns (
 	board_id UUID NOT NULL,
 	name VARCHAR(100) NOT NULL,
   position INTEGER NOT NULL,
+  wip INTEGER DEFAULT NULL ,
 	PRIMARY KEY (id),
 	CONSTRAINT fk_board
 		FOREIGN KEY(board_id)
