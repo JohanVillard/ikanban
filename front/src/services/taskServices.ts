@@ -115,7 +115,7 @@ export async function updateColumnIdTask(
     columnId: string,
     taskId: string,
     newColumnId: string
-): Promise<Task> {
+): Promise<UpdateTaskResponse> {
     try {
         const response = await fetch(
             `${BASE_API_URL}/board/${boardId}/column/${columnId}/task/${taskId}`,
@@ -129,14 +129,13 @@ export async function updateColumnIdTask(
                 body: JSON.stringify({ columnId: newColumnId }),
             }
         );
+        const data = await response.json();
 
         if (!response.ok) {
-            const errorResponse = await response.json();
-            return errorResponse;
+            return data as ApiFailure;
         }
 
-        const task: Task = await response.json();
-        return task;
+        return data as ApiSuccess<Task>;
     } catch (error) {
         console.error(
             `La mise à jour de l'id de la colonne a échouée : ${error}`
@@ -150,7 +149,7 @@ export async function updateTaskPosition(
     columnId: string,
     taskId: string,
     newPosition: number
-): Promise<Task> {
+): Promise<UpdateTaskResponse> {
     try {
         const response = await fetch(
             `${BASE_API_URL}/board/${boardId}/column/${columnId}/task/${taskId}`,
@@ -161,18 +160,19 @@ export async function updateTaskPosition(
                     Accept: 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ position: newPosition }),
+                body: JSON.stringify({
+                    columnId: columnId,
+                    position: newPosition,
+                }),
             }
         );
+        const data = await response.json();
 
         if (!response.ok) {
-            const errorResponse = await response.json();
-            return errorResponse;
+            return data as ApiFailure;
         }
 
-        const task: Task = await response.json();
-
-        return task;
+        return data as ApiSuccess<Task>;
     } catch (error) {
         console.error(
             `La mise à jour de la position de la tâche dans la colonne a échouée : ${error}`
@@ -197,7 +197,7 @@ export async function updateTaskStatus(
                     Accept: 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ done: newStatus }),
+                body: JSON.stringify({ columnId: columnId, done: newStatus }),
             }
         );
         const data = await response.json();
@@ -209,7 +209,7 @@ export async function updateTaskStatus(
         return data as ApiSuccess<Partial<Task>>;
     } catch (error) {
         console.error(
-            `La mise à jour de la position de la tâche dans la colonne a échouée : ${error}`
+            `La mise à jour du statut de la tâche dans la colonne a échouée : ${error}`
         );
         throw error;
     }

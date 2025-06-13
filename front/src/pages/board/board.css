@@ -2,160 +2,196 @@
 
 /* Layout principal du board */
 .board-container {
-    padding: 2rem;
-    background-color: var(--color-background);
+  padding: 2rem;
+  background-color: var(--color-background);
 }
 
 /* Conteneur des colonnes */
 .column-container {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto; /* Permet de scroller horizontalement */
-    padding-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  /* Permet de scroller horizontalement */
+  padding-bottom: 1rem;
 }
 
 /* Une colonne */
 .column {
-    width: 300px;
-    min-width: 250px;
-    max-width: 90vw;
-    background-color: var(--color-column-background);
-    border-radius: 8px;
-    padding: 1rem;
-    min-width: 250px;
-    box-shadow:
-        0 4px 12px rgba(197, 214, 224, 0.4),
-        0 2px 4px rgba(0, 0, 0, 0.05);
+  width: 300px;
+  min-width: 250px;
+  max-width: 90vw;
+  background-color: var(--color-column-background);
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 250px;
+  box-shadow:
+    0 4px 12px rgba(197, 214, 224, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.05);
 
-    flex-shrink: 0;
-    margin-top: 10px;
+  flex-shrink: 0;
+  margin-top: 10px;
+}
+
+[id^="wip-display"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 0.5rem;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-radius: 6px;
+
+  /* Wip infini */
+  background-color: #679b9b;
+
+  color: #333;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+[id^="wip-display"].wip-ok {
+  background-color: #8BC34A;
+}
+
+[id^="wip-display"].wip-stop {
+  background-color: #FF6F61;
 }
 
 #column-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 /* Titre de colonne */
 .column h2 {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
-    color: #444;
-    white-space: nowrap; /* Empêcher le retour à la ligne */
-    overflow: hidden; /* Cache ce qui dépasse du bouton */
-    text-overflow: ellipsis; /* Affiche ... quand le text dépasse */
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #444;
+  white-space: nowrap;
+  /* Empêcher le retour à la ligne */
+  overflow: hidden;
+  /* Cache ce qui dépasse du bouton */
+  text-overflow: ellipsis;
+  /* Affiche ... quand le text dépasse */
 }
 
 #column-cmd {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
+
 .update-column-btn {
-    flex: 0;
-    background: none;
-    border: none;
-    color: var(--color-btn-update);
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-bottom: 0rrem;
+  flex: 0;
+  background: none;
+  border: none;
+  color: var(--color-btn-update);
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 0rrem;
 }
 
 .update-column-btn:hover {
-    color: var(--color-btn-update-hover);
+  color: var(--color-btn-update-hover);
 }
 
 .delete-column-btn {
-    flex: 0;
-    background: none;
-    border: none;
-    color: var(--color-btn-delete);
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-bottom: 6px;
+  flex: 0;
+  background: none;
+  border: none;
+  color: var(--color-btn-delete);
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 6px;
 }
 
 .delete-column-btn:hover {
-    color: var(--color-btn-delete-hover);
+  color: var(--color-btn-delete-hover);
 }
 
 /* Conteneur de tâche */
 .task-container {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--color-task-list-background);
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-task-list-background);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Liste de tâches */
-.task-list {
-    list-style: none;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    padding: 10px;
-    background-color: #a6b8c5;
+ul[id^="task-list-"] {
+  list-style: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 10px;
+  background-color: #a6b8c5;
 }
 
-.task-list:empty::after {
-    content: 'Glissez une tâche ici';
-    display: block;
-    color: #333;
-    font-style: italic;
-    height: 40px;
+ul[id^="task-list-"]:empty::after {
+  content: 'Glissez une tâche ici';
+  display: block;
+  color: #333;
+  font-style: italic;
+  height: 40px;
 }
 
 .add-task-btn {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding: 8px 12px;
-    background-color: #637373;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background-color: #637373;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
 }
 
 .add-task-btn:hover {
-    background-color: #679b9b;
+  background-color: #679b9b;
 }
 
-.task-list li {
-    padding: 8px 12px;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: grab;
-    transition:
-        background-color 0.2s ease-in-out,
-        transform 0.2s ease-in-out,
-        box-shadow 0.2s ease-in-out;
+ul[id^="task-list-"] li {
+  padding: 8px 12px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: grab;
+  transition:
+    background-color 0.2s ease-in-out,
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
-.task-list li,
+ul[id^="task-list-"] li,
 .task-item-not-done {
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 
-.task-list li:active {
-    cursor: grabbing; /* Curseur plus explicite lorsqu'on attrape l'élément */
-    transform: scale(1.05); /* Ajout d'un petit effet visuel */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Ombre portée pour donner un effet de "prise" */
+ul[id^="task-list-"] li:active {
+  cursor: grabbing;
+  /* Curseur plus explicite lorsqu'on attrape l'élément */
+  transform: scale(1.05);
+  /* Ajout d'un petit effet visuel */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  /* Ombre portée pour donner un effet de "prise" */
 }
 
-.task-list li:hover {
-    background-color: #679b9b; /* Un survol de couleur différent pour les éléments cliquables */
-    cursor: pointer; /* Le curseur "pointer" pour les liens */
+ul[id^="task-list-"] li:hover {
+  background-color: #679b9b;
+  /* Un survol de couleur différent pour les éléments cliquables */
+  cursor: pointer;
+  /* Le curseur "pointer" pour les liens */
 }
 
-.task-list button:hover {
-    background-color: #e0e0da;
-    border: 1px solid #000000;
+ul[id^="task-list-"] button:hover {
+  background-color: #e0e0da;
+  border: 1px solid #000000;
 }

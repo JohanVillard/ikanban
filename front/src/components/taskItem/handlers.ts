@@ -2,6 +2,9 @@ import {
     updateColumnIdTask,
     updateTaskPosition,
 } from '../../services/taskServices';
+import { UpdateTaskResponse } from '../../types/api';
+import Toast from '../toast/Toast';
+import updateWipDisplay from './updateWipDisplay';
 
 export function HandleDragOver(e: DragEvent) {
     e.preventDefault();
@@ -27,6 +30,7 @@ export function HandleDragEnd(e: DragEvent) {
     // Je convertis l'évenement en item de liste
     const taskElement = e.target as HTMLLIElement;
 
+    // Je nettoie les classes CSS
     if (taskElement) {
         taskElement.classList.remove('dragging');
     }
@@ -35,10 +39,12 @@ export function HandleDragEnd(e: DragEvent) {
 export function HandleDragDrop(boardId: string, columnId: string) {
     return async function (e: DragEvent) {
         e.preventDefault();
-        console.log('DROP sur colonne', columnId);
 
         const taskId = e.dataTransfer?.getData('taskId');
         const taskColumnId = e.dataTransfer?.getData('taskColumnId');
+
+        // columnId : id de la colonne où dépose la tâche
+        // tasksColumId : ancienne id de la colonne propriétaire de la tâche
 
         if (!taskId) {
             console.error(`L'identifiant de la tâche n'a pas été trouvé.`);
@@ -56,31 +62,42 @@ export function HandleDragDrop(boardId: string, columnId: string) {
             `[data-task-id="${taskId}"]`
         );
         if (!draggedTask) {
-            console.log("La tâche saisie n'a pas été retrouvée");
+            console.error("La tâche saisie n'a pas été retrouvée");
             return;
         }
 
         const tasksList = e.currentTarget as HTMLElement;
 
-        moveTaskInDom(tasksList, draggedTask, e);
-
-        // Je mets à jour l'ID de la colonne dans la BDD
+        // Je mets à jour l'ID de la colonne propriétaire de la tâche dans la BDD
         try {
             if (columnId !== taskColumnId) {
-                await updateColumnIdTask(
+                const addTaskToColumn = await updateColumnIdTask(
                     boardId,
                     taskColumnId,
                     taskId,
                     columnId
                 );
+
+                if (!addTaskToColumn.success) {
+                    Toast(addTaskToColumn.error, 'failure');
+                    return;
+                }
             }
 
+            moveTaskInDom(tasksList, draggedTask, e);
+
+            // Mise à jour de la colonne propriétaire de la tâche dans le DOM
+            draggedTask.setAttribute('data-task-column-id', columnId);
+
+            updateWipDisplay(taskColumnId); // Mise à jour de la colonne de départ
+            updateWipDisplay(columnId); // Mise à jour de la colonne d'arrivée
+
             // Je récupère la liste des tâches mise à jour dans le DOM
+            // Convertis une NodeList en tableau
             const orderedTasks = [...tasksList.querySelectorAll('li')];
 
+            // Mise à jour des positions récupérées à partir du dom dans la bdd
             await updateTaskPositions(boardId, columnId, orderedTasks);
-            // mise à jour des positions récupérées à partir du dom
-            // dans la bdd
         } catch (error) {
             console.error(`erreur lors de la mise à jour de la tâche ${error}`);
         }
@@ -91,36 +108,37 @@ async function moveTaskInDom(
     tasksList: HTMLElement,
     draggedTask: Element,
     e: DragEvent
-) {
+): Promise<void> {
     // Je récupère toute les tâches dans le DOM sous forme de tableau
     // Sauf celle que j'ai grab
     const allTasks = [...tasksList.querySelectorAll('li')].filter(
         (element) => element !== draggedTask
     );
-    console.log(allTasks);
 
     if (allTasks.length === 0) {
         // Je déplace la tâche si le tableau est vide
+        // La position est forcement 0
         tasksList.appendChild(draggedTask);
     }
 
-    // Je trouve la tâche devant laquelle on va insérer
-    // Si la souris est au-dessus du milieu de la tâche,
-    // Alors je considère que je dois la mettre avant cette tâche.
+    // Je trouve la tâche devant laquelle on va insérer en lachant le clic de la souris
+    // Si la position verticale de la souris est au-dessus du milieu de la tâche actuelle,
+    // Alors la tâche grabbée sera insérée avant cette tâche.
     let insertBefore = null;
     for (const task of allTasks) {
         // Je récupère la position de la tâche à l'écran
         const rect = task.getBoundingClientRect();
 
         // Je compare la position de l'axe vertical de la souris
-        // Et le milieu vertical de la tâche
+        // et le milieu vertical de la tâche
+        // Si la souris est au-dessus de ce milieu, on insère avant la tâche
         if (e.clientY < rect.top + rect.height / 2) {
             insertBefore = task;
             break;
         }
     }
 
-    // Insère soit avant, soit à la fin
+    // Insère soit avant, soit à la dernière position
     if (insertBefore) {
         tasksList.insertBefore(draggedTask, insertBefore);
     } else {
@@ -128,16 +146,22 @@ async function moveTaskInDom(
     }
 }
 
+/**
+ * Met à jour les positions des tâches dans une colonne donnée,
+ * en fonction de leur ordre actuel dans le DOM.
+ *
+ * @param {string} boardId - L'identifiant du tableau contenant les colonnes.
+ * @param {string} columnId - L'identifiant de la colonne où les tâches sont ordonnées.
+ * @param {HTMLElement[]} tasks - Un tableau d'éléments représentant les tâches ordonnées dans le DOM.
+ * @returns {Promise<UpdateTaskResponse[]>} Une promesse résolue avec les réponses de mise à jour de chaque tâche.
+ */
 async function updateTaskPositions(
     boardId: string,
     columnId: string,
     tasks: HTMLElement[]
-) {
-    // Je récupère la liste des tâches mis à jour dans le DOM
-    // Avec toutes les tâches cette foic ci
+): Promise<UpdateTaskResponse[]> {
     const orderedTasks = tasks.map((taskElement, newPosition) => {
-        const currentTaskId = taskElement.dataset.taskId;
-        if (!currentTaskId) return;
+        const currentTaskId = taskElement.dataset.taskId!;
 
         return updateTaskPosition(
             boardId,
@@ -147,5 +171,5 @@ async function updateTaskPositions(
         );
     });
 
-    await Promise.all(orderedTasks);
+    return await Promise.all(orderedTasks);
 }

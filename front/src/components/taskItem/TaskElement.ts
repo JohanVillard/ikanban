@@ -17,7 +17,7 @@ function TaskElement(boardId: string, column: Column): HTMLElement {
 
     // Je crée une liste de tâches pour la colonne
     const tasksList = document.createElement('ul');
-    tasksList.classList.add('task-list');
+    tasksList.id = `task-list-${column.id}`;
     taskContainer.appendChild(tasksList);
 
     return taskContainer;

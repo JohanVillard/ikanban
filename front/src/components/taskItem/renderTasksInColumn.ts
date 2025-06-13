@@ -1,12 +1,13 @@
 import { fetchTasksByColumns } from '../../services/taskServices';
 import { Column } from '../../types/column';
+import { Task } from '../../types/task';
 import TaskItem from './createTaskItem';
 
 async function renderTasksInColumn(
     boardId: string,
     column: Column,
     tasksList: HTMLUListElement | null
-): Promise<void> {
+): Promise<Task[]> {
     // Je récupère les tâches appartenant à la colonne
     const result = await fetchTasksByColumns(boardId, column.id);
 
@@ -14,6 +15,7 @@ async function renderTasksInColumn(
         console.warn(
             `Erreur survenue lors de la récupération des tâches : ${result.error}`
         );
+        return [];
     } else {
         const tasks = result.data || [];
 
@@ -23,6 +25,8 @@ async function renderTasksInColumn(
             const taskItem = TaskItem(task, boardId, column);
             tasksList?.appendChild(taskItem);
         }
+
+        return tasks;
     }
 }
 
