@@ -62,6 +62,18 @@ function ColumnElement(column: Column, boardId: string): HTMLElement {
         handleDeleteColumn(column, boardId, columnElement)
     );
 
+    // J'ajoute le nombre de tâches autorisées pour cette colonne
+    const columnWipDisplay = document.createElement('h3');
+    columnWipDisplay.id = `wip-display-${column.id}`;
+    if (column.wip) {
+        columnWipDisplay.textContent = column.wip.toString();
+        columnWipDisplay.dataset.wip = column.wip.toString();
+    } else {
+        columnWipDisplay.classList.add('fa-solid', 'fa-infinity');
+        columnWipDisplay.dataset.wip = '';
+    }
+    columnElement.appendChild(columnWipDisplay);
+
     return columnElement;
 }
 
