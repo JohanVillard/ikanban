@@ -140,7 +140,6 @@ async function editTaskForm(cssSelector: string) {
             e.preventDefault();
             const isDone = task?.done;
 
-            console.log('avant', isDone);
             const result = await updateTaskStatus(
                 boardId,
                 columnId,
@@ -160,11 +159,7 @@ async function editTaskForm(cssSelector: string) {
             if (result.data !== undefined) {
                 const isNowDone = result.data.done;
 
-                console.log('test');
-
                 task.done = isNowDone as boolean;
-
-                console.log('apres', task.done);
 
                 if (!isNowDone) {
                     editBtnValidate.textContent = 'Terminer la tâche';
