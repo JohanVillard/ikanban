@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ColumnService from '../services/columnService.js';
 import { validationResult } from 'express-validator';
+import { Column } from 'types/column.js';
 
 class ColumnController {
     private columnService: ColumnService;
@@ -28,9 +29,13 @@ class ColumnController {
             const { name, wip } = req.body;
             const { boardId } = req.params;
 
+            const wipLimit = this.normalizeWipLimit(wip);
+
+            console.log('wip: ', wipLimit);
+
             const column = await this.columnService.createColumn(
                 name,
-                wip,
+                wipLimit,
                 boardId
             );
 
@@ -40,6 +45,14 @@ class ColumnController {
 
             if (error.message === 'Ce nom de colonne est déjà utilisé') {
                 res.status(409).json({ success: false, error: error.message });
+            } else if (
+                error.message ===
+                `Le nombre de tâches autorisées doit être supérieure à zéro`
+            ) {
+                res.status(400).json({
+                    success: false,
+                    error: error.message,
+                });
             } else {
                 res.status(500).json({
                     success: false,
@@ -59,10 +72,10 @@ class ColumnController {
         } catch (error: any) {
             console.error(`Erreur en récupérant la colonne: ${error}`);
 
-            if (error.message === "La colonne n'a pas été trouvée.") {
+            if (error.message === "La colonne n'a pas été trouvée") {
                 res.status(404).json({ error: error.message });
             } else {
-                res.status(500).json({ error: 'Erreur serveur.' });
+                res.status(500).json({ error: 'Erreur serveur' });
             }
         }
     };
@@ -145,25 +158,21 @@ class ColumnController {
             });
         } catch (error: any) {
             console.error(`Erreur en modifiant la colonne: ${error}`);
-            if (
-                error.message ===
-                'Impossible de modifier la colonne : le nom est déjà pris'
-            ) {
+            if (error.message === 'Ce nom de colonne est déjà utilisé') {
                 res.status(409).json({
                     success: false,
                     error: error.message,
                 });
             } else if (
                 error.message ===
-                `Le nombre de tâches autorisées doit être supérieure au nombre de tâches stockées dans la colonne`
+                `Le nombre autorisé doit dépasser le nombre de tâches actuelles`
             ) {
                 res.status(400).json({
                     success: false,
                     error: error.message,
                 });
             } else if (
-                error.message ===
-                'Impossible de modifier la colonne : elle n’existe pas'
+                error.message === 'La modification de la colonne a échouée'
             ) {
                 res.status(404).json({
                     success: false,
@@ -199,6 +208,14 @@ class ColumnController {
             }
         }
     };
+
+    normalizeWipLimit(wip: number | null | string | undefined): Column['wip'] {
+        if (wip === '' || wip === undefined || wip === null) {
+            return null;
+        }
+
+        return wip as number;
+    }
 }
 
 export default ColumnController;

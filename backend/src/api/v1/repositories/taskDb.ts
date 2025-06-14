@@ -104,9 +104,9 @@ class TaskDb {
      * Récupère toutes les tâches d'une colonne spécifique.
      * Retourne `null` si aucune tâche n'est trouvée dans cette colonne.
      *
-     * @param {string} columnId - L'ID de la colonne pour laquelle récupérer les tâches.
-     * @returns {Promise<TaskDb[] | null>} La liste des tâches de la colonne ou `null` si aucune tâche n'est trouvée.
-     * @throws {Error} Si une erreur survient lors de la récupération des tâches.
+     * @param columnId - L'ID de la colonne pour laquelle récupérer les tâches.
+     * @returns La liste des tâches de la colonne ou `null` si aucune tâche n'est trouvée.
+     * @throws Error - Si une erreur survient lors de la récupération des tâches.
      */
     async findByColumnId(columnId: string): Promise<TaskDbRecord[] | null> {
         try {

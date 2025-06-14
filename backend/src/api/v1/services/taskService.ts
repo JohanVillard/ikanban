@@ -144,7 +144,7 @@ class TaskService {
             const dbTasks = await this.taskDb.findByColumnId(columnId);
             if (!dbTasks) {
                 throw new Error(
-                    "Aucune tâche n'est enregistrée dans cette colonne."
+                    "Aucune tâche n'est enregistrée dans cette colonne"
                 );
             }
 

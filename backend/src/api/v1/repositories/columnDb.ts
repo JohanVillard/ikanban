@@ -6,7 +6,7 @@ class ColumnDb {
         id: string,
         boardId: string,
         name: string,
-        wip: number
+        wip: number | null
     ): Promise<ColumnDbRecord> {
         try {
             // Récupérer la plus grande position actuelle dans le tableau

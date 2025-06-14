@@ -179,7 +179,7 @@ import { validationResult } from 'express-validator';
 
             if (
                 error.message ===
-                "Aucune tâche n'est enregistrée dans cette colonne."
+                "Aucune tâche n'est enregistrée dans cette colonne"
             ) {
                 res.status(409).json({
                     success: false,
@@ -188,7 +188,7 @@ import { validationResult } from 'express-validator';
             } else {
                 res.status(500).json({
                     success: false,
-                    error: 'Erreur serveur.',
+                    error: 'Erreur serveur',
                 });
             }
         }

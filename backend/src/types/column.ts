@@ -3,7 +3,7 @@ export type ColumnDbRecord = {
     board_id: string;
     name: string;
     position: number;
-    wip: number;
+    wip: number | null;
 };
 
 export type Column = {
@@ -11,5 +11,12 @@ export type Column = {
     boardId: string;
     name: string;
     position: number;
-    wip: number;
+    wip: number | null;
+};
+
+export type ColumnValidationInput = {
+    name: string;
+    wip: number | null;
+    boardId: string;
+    isNewName?: boolean;
 };
