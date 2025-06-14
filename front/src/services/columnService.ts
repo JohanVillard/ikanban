@@ -128,17 +128,22 @@ export async function deleteColumn(
     boardId: string,
     columnId: string
 ): Promise<void> {
-    const response = await fetch(
-        `${BASE_API_URL}/board/${boardId}/column/${columnId}`,
-        {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            credentials: 'include',
-        }
-    );
+    try {
+        const response = await fetch(
+            `${BASE_API_URL}/board/${boardId}/column/${columnId}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                credentials: 'include',
+            }
+        );
 
-    await response.json();
+        await response.json();
+    } catch (error) {
+        console.error('Erreur lors de la suppression de la colonne : ', error);
+        throw error;
+    }
 }

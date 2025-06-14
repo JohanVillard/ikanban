@@ -4,3 +4,10 @@ export type Column = {
     userId: string;
     wip: number;
 };
+
+export type ColumnCommandsArgs = {
+    columnHeader: HTMLDivElement;
+    column: Column;
+    boardId: string;
+    columnElement: HTMLElement;
+};
