@@ -20,6 +20,7 @@ function NameInput(label: string): HTMLDivElement {
         '/register': 'Exemple : Mon projet',
         '/create-board': 'Exemple : Mon projet',
         '/board': 'Exemple : Mon projet',
+        // ToDo: Ajouter les descriptions d'aide pour les autres chemins
     };
 
     const helpText = ariaDataPathMapping[path];

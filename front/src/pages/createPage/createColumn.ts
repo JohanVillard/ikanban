@@ -8,7 +8,7 @@ async function createColumnPage() {
     if (!appContainer) return;
 
     // Je crée le header en premier
-    const header = Header('Création de tableau');
+    const header = Header('Création de colonne');
     appContainer.appendChild(header);
 
     // Je crée le conteneur de la carte
