@@ -1,8 +1,6 @@
 import NameInput from '../../../components/labeledInput/NameInput';
 import PasswordInput from './input/PasswordInput';
 import handleSubmitFormData from '../../../components/forms/submitForm';
-import ValidationContainer from '../../../components/messageContainer/ValidationContainer';
-import ErrorContainer from '../../../components/messageContainer/ErrorContainer';
 import '../../../components/forms/forms.css';
 import SubmitBtn from '../../../components/buttons/SubmitBtn';
 import CancelBtn from '../../../components/buttons/CancelBtn';
@@ -11,6 +9,7 @@ import { goBack } from '../../../utils/navigation';
 import DeleteBtn from '../../../components/buttons/DeleteBtn';
 import handleDeleteUser from './input/handleDeleteUser';
 import PasswordInputConfirmation from './input/PasswordInputConfirmation';
+import MessageContainer from '../../../components/messageContainer/MessageContainer';
 
 function CredentialsForm(cssSelector: string): void {
     const container = document.querySelector(cssSelector);
@@ -37,8 +36,8 @@ function CredentialsForm(cssSelector: string): void {
             credentialsForm.appendChild(PasswordInputConfirmation());
         }
 
-        credentialsForm.appendChild(ValidationContainer());
-        credentialsForm.appendChild(ErrorContainer());
+        credentialsForm.appendChild(MessageContainer('validation'));
+        credentialsForm.appendChild(MessageContainer('error'));
 
         // Je crée un button de soumission en fonction de la route
         const submitBtnTexts: Record<string, string> = {

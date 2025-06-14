@@ -4,13 +4,12 @@ import {
     handleFormResponse,
     handleFrontValidationError,
 } from '../../utils/userMessageHandlers';
-import ErrorContainer from '../messageContainer/ErrorContainer';
-import ValidationContainer from '../messageContainer/ValidationContainer';
 import CancelBtn from '../buttons/CancelBtn';
 import SubmitBtn from '../buttons/SubmitBtn';
 import NameInput from '../labeledInput/NameInput';
 import { goTo } from '../../utils/navigation';
 import WipInput from '../labeledInput/WipInput';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 function createColumnForm(cssSelector: string): void {
     const container = document.querySelector(cssSelector);
@@ -31,8 +30,8 @@ function createColumnForm(cssSelector: string): void {
         createForm.appendChild(WipInput('Entrez le nombre maximum de tâches'));
 
         // Je communique le résultat de la soumission
-        createForm.appendChild(ValidationContainer());
-        createForm.appendChild(ErrorContainer());
+        createForm.appendChild(MessageContainer('validation'));
+        createForm.appendChild(MessageContainer('error'));
 
         // Je crée le bouton d'ajout de projet
         createForm.appendChild(SubmitBtn('Créer'));

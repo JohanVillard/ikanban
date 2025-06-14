@@ -13,8 +13,7 @@ import { goTo } from '../../utils/navigation';
 import EditBtn from '../buttons/EditBtn';
 import DescriptionInput from '../labeledInput/DescriptionInput';
 import NameInput from '../labeledInput/NameInput';
-import ErrorContainer from '../messageContainer/ErrorContainer';
-import ValidationContainer from '../messageContainer/ValidationContainer';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 async function editTaskForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -64,8 +63,8 @@ async function editTaskForm(cssSelector: string) {
         descriptionInput.value = taskDescription || '';
 
         // Je communique le résultat de la soumission
-        editForm.appendChild(ValidationContainer());
-        editForm.appendChild(ErrorContainer());
+        editForm.appendChild(MessageContainer('validation'));
+        editForm.appendChild(MessageContainer('error'));
 
         // Je crée les boutons et définis leurs comportements
         editForm.appendChild(EditBtn());

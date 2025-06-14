@@ -8,8 +8,7 @@ import { goTo } from '../../utils/navigation';
 import CancelBtn from '../buttons/CancelBtn';
 import EditBtn from '../buttons/EditBtn';
 import NameInput from '../labeledInput/NameInput';
-import ErrorContainer from '../messageContainer/ErrorContainer';
-import ValidationContainer from '../messageContainer/ValidationContainer';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 async function editBoardForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -40,8 +39,8 @@ async function editBoardForm(cssSelector: string) {
         editInput.value = boardName;
 
         // Je communique le résultat de la soumission
-        editForm.appendChild(ValidationContainer());
-        editForm.appendChild(ErrorContainer());
+        editForm.appendChild(MessageContainer('validation'));
+        editForm.appendChild(MessageContainer('error'));
 
         // Je crée les boutons de commandes
         editForm.appendChild(EditBtn());

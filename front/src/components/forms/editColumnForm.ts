@@ -11,9 +11,8 @@ import { goTo } from '../../utils/navigation';
 import CancelBtn from '../buttons/CancelBtn';
 import EditBtn from '../buttons/EditBtn';
 import NameInput from '../labeledInput/NameInput';
-import ErrorContainer from '../messageContainer/ErrorContainer';
-import ValidationContainer from '../messageContainer/ValidationContainer';
 import WipInput from '../labeledInput/WipInput';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 async function editColumnForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -52,8 +51,8 @@ async function editColumnForm(cssSelector: string) {
         wipInput.value = oldWip !== null ? oldWip.toString() : '';
 
         // Je communique le résultat de la soumission
-        editForm.appendChild(ValidationContainer());
-        editForm.appendChild(ErrorContainer());
+        editForm.appendChild(MessageContainer('validation'));
+        editForm.appendChild(MessageContainer('error'));
 
         editForm.appendChild(EditBtn());
         editForm.addEventListener('submit', async (e) => {

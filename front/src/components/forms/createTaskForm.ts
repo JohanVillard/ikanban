@@ -9,8 +9,7 @@ import CancelBtn from '../buttons/CancelBtn';
 import SubmitBtn from '../buttons/SubmitBtn';
 import DescriptionInput from '../labeledInput/DescriptionInput';
 import NameInput from '../labeledInput/NameInput';
-import ValidationContainer from '../messageContainer/ValidationContainer';
-import ErrorContainer from '../messageContainer/ErrorContainer';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 async function createTaskForm(cssSelector: string) {
     const container = document.querySelector(cssSelector);
@@ -32,8 +31,8 @@ async function createTaskForm(cssSelector: string) {
             DescriptionInput('Entrez la description de la tâche')
         );
         // Je communique le résultat de la soumission
-        createForm.appendChild(ValidationContainer());
-        createForm.appendChild(ErrorContainer());
+        createForm.appendChild(MessageContainer('validation'));
+        createForm.appendChild(MessageContainer('error'));
 
         createForm.appendChild(SubmitBtn('Créer'));
 

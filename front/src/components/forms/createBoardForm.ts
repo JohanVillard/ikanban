@@ -4,12 +4,11 @@ import {
     handleFormResponse,
     handleFrontValidationError,
 } from '../../utils/userMessageHandlers';
-import ValidationContainer from '../messageContainer/ValidationContainer';
-import ErrorContainer from '../messageContainer/ErrorContainer';
 import CancelBtn from '../buttons/CancelBtn';
 import SubmitBtn from '../buttons/SubmitBtn';
 import NameInput from '../labeledInput/NameInput';
 import { goTo } from '../../utils/navigation';
+import MessageContainer from '../messageContainer/MessageContainer';
 
 function createBoardForm(cssSelector: string): void {
     const container = document.querySelector(cssSelector);
@@ -23,8 +22,8 @@ function createBoardForm(cssSelector: string): void {
         createForm.appendChild(NameInput('Entrez le nom du tableau'));
 
         // Je communique le résultat de la soumission
-        createForm.appendChild(ValidationContainer());
-        createForm.appendChild(ErrorContainer());
+        createForm.appendChild(MessageContainer('validation'));
+        createForm.appendChild(MessageContainer('error'));
 
         // Je crée le bouton d'ajout de projet
         createForm.appendChild(SubmitBtn('Créer'));
