@@ -11,7 +11,7 @@ function WipInput(label: string): HTMLDivElement {
     inputContainer.appendChild(labelContainer);
 
     const inputField = document.createElement('input');
-    inputField.type = 'number';
+    inputField.type = 'text';
     inputField.id = 'wip';
     inputField.name = 'wip';
     inputField.classList.add('input-field');
