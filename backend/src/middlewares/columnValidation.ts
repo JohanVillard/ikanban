@@ -9,17 +9,12 @@ const columnValidationSchema = checkSchema({
     },
     wip: {
         in: ['body'],
-        optional: {
-            options: {
-                nullable: true,
-                checkFalsy: true,
-            },
-        },
+        optional: { options: { checkFalsy: true } }, // Laisse passer les valeurs falsy
         isInt: {
             options: { min: 1 },
             errorMessage: 'Veuillez entrer uniquement des chiffres positifs',
         },
-        toInt: true, // Convertit en entier
+        toInt: true,
     },
 });
 
