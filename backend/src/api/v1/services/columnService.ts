@@ -28,7 +28,7 @@ class ColumnService {
     ): Promise<Column> {
         try {
             // 1. Validation
-            await this.validateColumn(name, wip, boardId);
+            await this.validateColumn({ name, wip, boardId });
 
             // 2. Création
             const id = uuidv4();
