@@ -11,3 +11,11 @@ export type User = {
     email: string;
     passwordHash: string;
 };
+
+export type NewUser = {
+    id: string;
+    name: string;
+    email: string;
+    plainPassword: string;
+    confirmationPassword: string;
+};
