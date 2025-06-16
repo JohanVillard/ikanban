@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import UserService from '../services/userService.js';
 import { validationResult } from 'express-validator';
+import { NewUser } from 'types/user.js';
 
 class UserController {
     private userService: UserService;
@@ -12,6 +13,7 @@ class UserController {
     // Il est nécessaire de lier les méthodes à la classe
     // lorsqu'elles sont utilisées par une bibliothèque externe
     // (comme Express ici) afin de préserver le bon contexte de `this`.
+    // D'où l'utilisation d'une fonction fléchée
     registerUser = async (req: Request, res: Response): Promise<void> => {
         // Vérifier s'il y a des erreurs de validation
         const errors = validationResult(req);
@@ -24,15 +26,10 @@ class UserController {
             return;
         }
 
-        const { name, email, password, passconf } = req.body;
+        const newUser: NewUser = req.body;
 
         try {
-            const user = await this.userService.createUser(
-                name,
-                email,
-                password,
-                passconf
-            );
+            const user = await this.userService.createUser(newUser);
 
             if (!user) {
                 res.sendStatus(404);
@@ -50,7 +47,8 @@ class UserController {
             if (error.message === 'Impossible de créer le compte') {
                 res.status(409).json({ success: false, error: error.message });
             } else if (
-                error.message === 'Les mots de passe ne correspondent pas'
+                error.message ===
+                'Le mot de passe et sa confirmation ne correspondent pas'
             ) {
                 res.status(400).json({ success: false, error: error.message });
             } else {
