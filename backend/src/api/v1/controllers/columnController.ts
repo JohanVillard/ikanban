@@ -13,6 +13,7 @@ class ColumnController {
     // Il est nécessaire de lier les méthodes à la classe
     // lorsqu'elles sont utilisées par une bibliothèque externe
     // (comme Express ici) afin de préserver le bon contexte de `this`.
+    // D'où l'utilisation d'une fonction fléchée
     createColumn = async (req: Request, res: Response): Promise<void> => {
         // Vérifier s'il y a des erreurs de validation
         const errors = validationResult(req);
