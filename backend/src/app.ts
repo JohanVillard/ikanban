@@ -13,21 +13,16 @@ import taskRoutes from './api/v1/routes/taskRoutes.js';
 
 const app = express();
 
-// Je sécurise les headers HTTP
-app.use(helmet());
-
-app.use(cookieParser());
-
+app.use(helmet()); // Je sécurise les headers HTTP
+app.use(cookieParser()); // Middleware de gestion de cookies
+// TODO: À configurer pour la prod
+// Accepte les requêtes de Vite et autorise les cookies..
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-
-app.use(express.json());
-
-// J'améliore les logs
-app.use(morgan('dev'));
-
+app.use(express.json()); // Intérprétation des requêtes JSON
+app.use(morgan('dev')); // Améliorations des log
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Je déclare les routes
+// Déclaration des routes
 app.use('/api/v1', authRoutes);
 app.use('/api/v1', userRoutes);
 app.use('/api/v1', boardRoutes);
