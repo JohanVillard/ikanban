@@ -1,19 +1,29 @@
 import pool from '../../../config/connectDB.js';
-import { UserDbRecord } from '../../../types/user.js';
+import { User, UserDbRecord } from '../../../types/user.js';
 
 class UserDb {
-    async create(
-        id: string,
-        name: string,
-        email: string,
-        passwordHash: string
-    ): Promise<UserDbRecord> {
+    /**
+     * Crée un nouvel utilisateur dans la base de données.
+     *
+     * @param {User} user - L'utilisateur à créer, contenant son id, nom, email et mot de passe haché.
+     * @returns {Promise<UserDbRecord | null>} - L'utilisateur créé, ou null si la création a échoué.
+     * @throws {Error} - En cas d'erreur lors de l'insertion dans la base de données.
+     */
+    async create(user: User): Promise<UserDbRecord | null> {
         try {
+            // 1. Déstructuration de l'objet user
+            const { id, name, email, passwordHash } = user;
+
+            // 2. Construction de la requête préparée
             const query =
                 'INSERT INTO users (id, name, email, password_hash) VALUES ($1, $2, $3, $4) RETURNING *';
             const values = [id, name, email, passwordHash];
 
+            // 3. Insertion du nouvel utilisateur
             const res = await pool.query(query, values);
+            if (res.rows.length === 0) {
+                return null;
+            }
 
             return res.rows[0];
         } catch (error) {

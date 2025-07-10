@@ -11,6 +11,7 @@ import { goTo } from '../../utils/navigation';
 import MessageContainer from '../messageContainer/MessageContainer';
 
 function createBoardForm(cssSelector: string): void {
+    // 1. Récupération de la section
     const container = document.querySelector(cssSelector);
     if (container) {
         // Je crée le formulaire

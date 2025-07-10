@@ -31,32 +31,32 @@ class UserService {
      *
      * @async
      * @param newUser - L'objet contenant les données du nouvel utilisateur.
-     * Doit contenir les propriétés `name`, `email`, `plainPassword` et `confirmationPassword`.
+     * Doit contenir les propriétés `name`, `email`, `password` et `passconf`.
      * @returns Le nouvel utilisateur.
      * @throws {Error} Lance une erreur si l'adresse e-mail est déjà utilisée, si les mots de passe ne correspondent pas, si la création de l'utilisateur échoue.
      */
     async createUser(newUser: NewUser): Promise<Omit<User, 'passwordHash'>> {
         // 1. Déstructuration de newUser
-        const { name, email, plainPassword, confirmationPassword } = newUser;
+        const { name, email, password, passconf } = newUser;
 
         try {
             // 2. Validation
             await this.ensureUniqueEmail(email);
-            this.validatePasswordsMatch(plainPassword, confirmationPassword);
+            this.validatePasswordsMatch(password, passconf);
 
             // 3. Hachage du mot de passe
-            const hashedPassword = this.hashPassword(10, plainPassword);
+            const passwordHash = this.hashPassword(10, password);
 
             // 4. Création d'un identifiant
             const id = uuidv4();
 
             // 5. Création de l'utilisateur
-            const user = await this.userDb.create(
+            const user = await this.userDb.create({
                 id,
                 name,
                 email,
-                hashedPassword
-            );
+                passwordHash,
+            });
             if (!user) {
                 throw new Error("La création de l'utilisateur a échoué");
             }
@@ -78,16 +78,13 @@ class UserService {
     /**
      * Vérifie que le mot de passe et sa confirmation sont identiques.
      *
-     * @param plainPassword - Le mot de passe non haché de l'utilisateur.
-     * @param confirmationPassword - La confirmation du mot de passe.
+     * @param password- Le mot de passe non haché de l'utilisateur.
+     * @param passconf - La confirmation du mot de passe.
      *
      * @throws {Error} - Si les mots de passe ne correspondent pas.
      */
-    private validatePasswordsMatch(
-        plainPassword: string,
-        confirmationPassword: string
-    ): void {
-        if (plainPassword !== confirmationPassword) {
+    protected validatePasswordsMatch(password: string, passconf: string): void {
+        if (password !== passconf) {
             throw new Error(
                 'Le mot de passe et sa confirmation ne correspondent pas'
             );
@@ -101,7 +98,7 @@ class UserService {
      * @param plainPassword - Le mot de passe à hacher.
      * @returns Le mot de passe haché.
      */
-    private hashPassword(saltRounds: number, plainPassword: string): string {
+    protected hashPassword(saltRounds: number, plainPassword: string): string {
         const salt = genSaltSync(saltRounds);
         return hashSync(plainPassword, salt);
     }
@@ -112,7 +109,7 @@ class UserService {
      * @param email - L'adresse à vérifier.
      * @throws {Error} - Si l'adresse e-mail existe déjà dans la base de données.
      */
-    private async ensureUniqueEmail(email: string): Promise<void> {
+    protected async ensureUniqueEmail(email: string): Promise<void> {
         const user = await this.userDb.findByMail(email);
         if (user) {
             throw new Error('Impossible de créer le compte');
@@ -165,7 +162,10 @@ class UserService {
      * @param password - Le mot de passe de l'utilisateur.
      * @throws {Error} Si les identifiants sont une chaîne de caractères vide.
      */
-    private validateCredentialsProvided(email: string, password: string): void {
+    protected validateCredentialsProvided(
+        email: string,
+        password: string
+    ): void {
         if (email.length === 0 || password.length === 0) {
             throw new Error('Email ou mot de passe requis');
         }
@@ -178,7 +178,7 @@ class UserService {
      * @returns L'utilisateur trouvé dans la base de donnée.
      * @throws {Error} Si aucun utilisateur n'est associé à cette adresse e-mail.
      */
-    private async getUserByMail(email: string): Promise<UserDbRecord> {
+    protected async getUserByMail(email: string): Promise<UserDbRecord> {
         const user = await this.userDb.findByMail(email);
         if (!user) {
             throw new Error('Les identifiants sont invalides');
@@ -194,7 +194,7 @@ class UserService {
      * @param hashedPassword - Le mot de passe haché trouvé dans la base de donnée.
      * @throws {Error} Si les mots de passe ne correspondent pas.
      */
-    private verifyPassword(password: string, hashedPassword: string): void {
+    protected verifyPassword(password: string, hashedPassword: string): void {
         const isValid = compareSync(password, hashedPassword);
         if (!isValid) {
             throw new Error('Les identifiants sont invalides');
@@ -210,7 +210,7 @@ class UserService {
      * @returns L'utilisateur sans mot de passe haché.
      * @throws {Error} Si aucune propriété de mot de passe haché n'est trouvée.
      */
-    private excludePassword(
+    protected excludePassword(
         user: UserDbRecord | User
     ): Omit<User, 'passwordHash'> {
         if ('password_hash' in user) {

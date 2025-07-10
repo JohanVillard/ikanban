@@ -13,9 +13,8 @@ export type User = {
 };
 
 export type NewUser = {
-    id: string;
     name: string;
     email: string;
-    plainPassword: string;
-    confirmationPassword: string;
+    password: string;
+    passconf: string;
 };

@@ -4,19 +4,34 @@ import UserService from '../src/api/v1/services/userService';
 import UserDb from '../src/api/v1/repositories/userDb';
 import chaiAsPromised from 'chai-as-promised';
 import * as chai from 'chai';
+import { NewUser, UserDbRecord } from '../src/types/user';
 
 chai.use(chaiAsPromised);
 
+class UserServiceTestable extends UserService {
+    public testValidatePasswordsMatch(
+        password: string,
+        passconf: string
+    ): void {
+        return this.validatePasswordsMatch(password, passconf);
+    }
+
+    public testHashPassword(saltRounds: number, plainPassword: string): string {
+        return this.hashPassword(saltRounds, plainPassword);
+    }
+}
+
 describe('UserService', () => {
-    let userService: UserService;
+    let userService: UserServiceTestable;
 
     // Simulation de la classe UserDb
     let userDbStub: sinon.SinonStubbedInstance<UserDb>;
 
+    // Avant chaque test
     beforeEach(() => {
-        // Créer une instance du contrôleur
+        userService = new UserServiceTestable();
+        // Création d'une fausse instance de UserDb
         userDbStub = sinon.createStubInstance(UserDb);
-        userService = new UserService();
         userService['userDb'] = userDbStub;
     });
 
@@ -25,36 +40,34 @@ describe('UserService', () => {
     });
 
     it('doit créer un utilisateur avec succès et le retourner sans le mot de passe haché', async () => {
-        // Je déclare les valeurs attendues qui serviront de référence pour vérifier le résultat
-        const name = 'John Doe';
-        const email = 'john@example.com';
-        const password = 'Password123!';
-        const confirmPassword = 'Password123!';
+        // 1. Déclaration des données nécéssaires pour créer un nouvel utilisateur
+        const newUser: NewUser = {
+            name: 'John Doe',
+            email: 'john@example.com',
+            password: 'Password123!',
+            passconf: 'Password123!',
+        };
 
-        const fakeUser = {
+        // 2. Déclaration des données nécéssaires pour insérer le nouvel utilisateur dans la DB
+        const fakeUser: UserDbRecord = {
             id: '1',
-            name: name,
-            email: email,
+            name: newUser.email,
+            email: newUser.email,
             password_hash: 'hashed_password_123',
         };
 
         userDbStub.findByMail.resolves(null); // Simule email est unique
         userDbStub.create.resolves(fakeUser); // Simule l'appel à la db
 
-        const result = await userService.createUser(
-            name,
-            email,
-            password,
-            confirmPassword
-        );
+        const result = await userService.createUser(newUser);
 
-        // Je vérifie que les méthode simulée ont bien été appelé
+        // Je vérifie que les méthodes simulées ont bien été appelées
         expect(userDbStub.create.calledOnce).to.be.true;
-        expect(userDbStub.findByMail.calledWith(email)).to.be.true;
+        expect(userDbStub.findByMail.calledWith(newUser.email)).to.be.true;
         expect(result).to.deep.equal({
-            id: '1',
-            name,
-            email,
+            id: fakeUser.id,
+            name: fakeUser.name,
+            email: fakeUser.email,
         });
     });
 
@@ -73,22 +86,27 @@ describe('UserService', () => {
     describe('validatePasswordMatch', () => {
         it("ne doit pas lancer d'erreur si les mots de passe correspondent", () => {
             expect(() =>
-                userService.validatePasswordsMatch('Azerty1!', 'Azerty1!')
+                userService.testValidatePasswordsMatch('Azerty1!', 'Azerty1!')
             ).to.not.throw();
         });
 
         it('doit renvoyer une erreur si les mots de passe ne correspondent pas', () => {
             expect(() =>
-                userService.validatePasswordsMatch('Azerty1!', 'ytreza')
-            ).to.throw('Les mots de passe ne correspondent pas');
+                userService.testValidatePasswordsMatch('Azerty1!', 'ytreza')
+            ).to.throw(
+                'Le mot de passe et sa confirmation ne correspondent pas'
+            );
         });
     });
 
     describe('hashPassword', () => {
         it('doit retourner une chaîne non vide différente du mot de passe', () => {
             const plainPassword = 'Azerty1!';
-            const salt = 10;
-            const hashed = userService.hashPassword(salt, plainPassword);
+            const saltRounds = 10;
+            const hashed = userService.testHashPassword(
+                saltRounds,
+                plainPassword
+            );
 
             expect(hashed).to.be.a('string').and.not.empty;
             expect(hashed).to.not.equal(plainPassword);
@@ -96,10 +114,16 @@ describe('UserService', () => {
 
         it('doit produire des hashes différents pour le même mot de passe', () => {
             const plainPassword = 'Azerty1!';
-            const salt = 10;
+            const saltRounds = 10;
 
-            const hash1 = userService.hashPassword(salt, plainPassword);
-            const hash2 = userService.hashPassword(salt, plainPassword);
+            const hash1 = userService.testHashPassword(
+                saltRounds,
+                plainPassword
+            );
+            const hash2 = userService.testHashPassword(
+                saltRounds,
+                plainPassword
+            );
 
             expect(hash1).to.not.equal(hash2);
         });

@@ -10,18 +10,28 @@ export function HandleDragOver(e: DragEvent) {
     e.preventDefault();
 }
 
+/**
+ * Gestionnaire d'événement déclenché au début du glisser-déposer d'une tâche.
+ * Récupère les identifiants de la tâche et de sa colonne via les attributs data-*,
+ * puis les stocke dans l'objet dataTransfer pour les utiliser lors du drop.
+ *
+ * @param {DragEvent} e - L'événement de dragstart
+ */
 export function HandleDragStart(e: DragEvent) {
-    // Je récupère la tâche ciblée
-    // Je convertis l'évenement en item de liste
+    // 1. Récupération de l'élément cible du drag (la tâche)
     const taskElement = e.target as HTMLElement;
+
+    // 2. Extraction des données personnalisées data-task-id et data-task-column-id
     const taskId = taskElement.dataset.taskId;
     const columnId = taskElement.dataset.taskColumnId;
 
     if (taskId && columnId) {
+        // 3. Stockage des données dans l'objet dataTransfer pour le transfert lors du drop
         e.dataTransfer?.setData('taskId', taskId);
         e.dataTransfer?.setData('taskColumnId', columnId);
 
-        taskElement.classList.add('dragging'); // Permet de styliser le déplacement de la tâche
+        // 3. Ajout d'une classe CSS pour appliquer un style spécifique durant le drag
+        taskElement.classList.add('dragging');
     }
 }
 

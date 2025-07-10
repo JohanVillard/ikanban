@@ -3,19 +3,20 @@ import Header from '../../components/header/Header';
 import './create.css';
 
 function createBoardPage(): void {
+    // 1. Conteneur d'app
     const appContainer = document.querySelector('#app');
     if (!appContainer) return;
 
-    // Je crée le header en premier
+    // 2. Header
     const header = Header('Création de tableau');
     appContainer.appendChild(header);
 
-    // Je crée le conteneur de la carte de création
+    // 3. Conteneur de section
     const createContainer = document.createElement('section');
     createContainer.id = 'create-container';
     appContainer.appendChild(createContainer);
 
-    // Et je le construis
+    // 4. Formulaire
     createBoardForm('#create-container');
 }
 

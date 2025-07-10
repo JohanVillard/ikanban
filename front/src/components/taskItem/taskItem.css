@@ -1,42 +1,52 @@
 /* Style quand la tâche est terminé */
 .draggable-task.task-item-is-done,
 .task-button.task-item-is-done {
-    background-color: var(--color-is-done-btn); /* Vert clair */
-    color: var(--color-text); /* Texte vert pour dire "fait" */
-    text-decoration: line-through; /* Pour montrer que c'est terminé */
-    opacity: 0.8;
+  background-color: var(--color-is-done-btn);
+  /* Vert clair */
+  color: var(--color-text);
+  /* Texte vert pour dire "fait" */
+  text-decoration: line-through;
+  /* Pour montrer que c'est terminé */
+  opacity: 0.8;
 }
 
+/* Changement de couleur au survol */
 .task-item-is-done:hover {
-    background-color: green;
+  background-color: green;
 }
 
 /* Zone de grab */
 .grab-zone {
-    background-color: var(--color-grab-zone); /* Couleur de la poignée */
-    height: 8px;
-    width: 100%;
-    cursor: grab;
-    margin-bottom: 8px; /* Espacement entre la poignée et le contenu */
-    border-radius: 4px 4px 0 0; /* Coins arrondis en haut */
+  background-color: var(--color-grab-zone);
+  /* Couleur de la poignée */
+  height: 8px;
+  width: 100%;
+  cursor: grab;
+  margin-bottom: 8px;
+  /* Espacement entre la poignée et le contenu */
+  border-radius: 4px 4px 0 0;
+  /* Coins arrondis en haut */
 }
 
 /* Pendant le glisser */
 .draggable-task.dragging {
-    opacity: 0.5;
-    border: 2px solid var(--color-grab-zone);
+  opacity: 0.5;
+  border: 2px solid var(--color-grab-zone);
 }
 
 /* Pour le bouton de tâche*/
 .task-button {
-    background-color: var(--color-input-background);
-    width: 100%;
-    border: none;
-    border-radius: 4px;
-    color: black;
-    cursor: pointer;
-    padding: 8px 12px;
-    white-space: nowrap; /* Empêcher le retour à la ligne */
-    overflow: hidden; /* Cache ce qui dépasse du bouton */
-    text-overflow: ellipsis; /* Affiche ... quand le text dépasse */
+  background-color: var(--color-input-background);
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  color: black;
+  cursor: pointer;
+  padding: 8px 12px;
+  white-space: nowrap;
+  /* Empêcher le retour à la ligne */
+  overflow: hidden;
+  /* Cache ce qui dépasse du bouton */
+  text-overflow: ellipsis;
+  /* Affiche ... quand le text dépasse */
 }
